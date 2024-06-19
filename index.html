@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Using OpenLayers with Vite</title>
+  </head>
+  <body>
+    <!-- 지도 영역 -->
+    <div id="map"></div>
+    <div id="map2">Selected regions: <span id="info">None</span></div>
+
+    <!-- popup 영역 -->
+    <div id="landyview">
+      <a href="" id="jspurl"><h3 id="cvs_id"></h3></a>      
+      <ul>
+        <li>지번: <span id="cvs_name"></span></li>
+        <li>면적: <span id="cvs_addr_doro"></span></li>
+        <li>용도지역: <span id="cvs_addr_jibun"></span></li>
+        <li>공시지가: <span id="cvs_tel"></span></li>
+      </ul>
+    </div>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

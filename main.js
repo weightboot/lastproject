@@ -16,11 +16,15 @@ import { Circle } from 'ol/style';
 import { Stroke } from 'ol/style';
 import { Fill } from 'ol/style';
 
+
 // view와의 상호작용을 위해 
 import { Select,DragBox,defaults } from 'ol/interaction';//드래그박스 추가
 import { pointerMove,platformModifierKeyOnly, click } from 'ol/events/condition';//플랫폼수정키온리 추가
 import {getWidth} from 'ol/extent';//폭 얻는 추가-어떤기능을 하는지 추가로 적을것
 
+//////////초기 전역변수 wfs소스값을 저장하는 변수 선언
+var wfsLayer;
+var wfsSource;
 
 // 테스트 환경과 실제 tomcat 서버에 올렸을 때의 url이 다르니 g_url 변수를 이용한다.
 //const g_url = "http://172.20.221.167:42888";
@@ -29,7 +33,25 @@ const g_url = "http://localhost:42888";//내부서버 확인용
 /**
  * CQL 필터 만들기. 모든 CQL은 이 함수를 통한다.
  */
-function getCQL()
+function getCQLsearch(method) {
+  let filter = "";
+
+  if ('sido01' == method)
+    filter = "address = '서울특별시 강남구 대치동'"
+
+  else if ('sido02' == method)
+    filter = "address = '서울특별시 강남구 도곡동'";
+
+  else if ('sido03' == method)
+    filter = "address = '서울특별시 강남구 삼성동'";
+
+  else if ('sido04' == method)
+    filter = "address = '서울특별시 강남구 압구정동'";
+
+    return filter;
+}
+
+function getCQLfilter()
 {
   let sCQL = "";
 
@@ -42,60 +64,76 @@ function getCQL()
   // filter도 filtersearch로 변경
   //운영여부에 조건이 있으면 열기 (를 붙임.
   if ((true == exclude01.checked) || (true == exclude02.checked)|| (true ==   exclude03.checked)|| (true == exclude04.checked))
-    // if (0 < sCQL.length){
-    //   sCQL += " and "
+     if (0 < sCQL.length){
+       sCQL += " and "
 
     
-    sCQL += "(";//}
+    sCQL += "(";}
 
   if (true == exclude01.checked) {
-    sCQL = sCQL + "youngdo in ('제1종일반주거지역','제1종전용주거지역','제2종일반주거지역','제3종일반주거지역','준주거지역')"
+    sCQL = sCQL + "not youngdo in ('제1종일반주거지역','제1종전용주거지역','제2종일반주거지역','제3종일반주거지역','준주거지역')"
   }
 
   if (true == exclude02.checked) {
     if (sCQL.charAt(sCQL.length - 1) != '(')
       sCQL += " or "
-    sCQL = sCQL + "youngdo = '일반상업지역'"
+    sCQL = sCQL + "not youngdo = '일반상업지역'"
   }
 
   if (true == exclude03.checked) {
     if (sCQL.charAt(sCQL.length - 1) != '(')
       sCQL += " or "
-    sCQL = sCQL + "youngdo in ('일반공업지역','전용공업지역','준공업지역')"
+    sCQL = sCQL + "not youngdo in ('일반공업지역','전용공업지역','준공업지역')"
   }
 
   if (true == exclude04.checked) {
     if (sCQL.charAt(sCQL.length - 1) != '(')
       sCQL += " or "
-    sCQL = sCQL + "youngdo in ('제1종일반주거지역','제1종전용주거지역','제2종일반주거지역','제3종일반주거지역','준주거지역','일반상업지역','일반공업지역','전용공업지역','준공업지역')"
+    sCQL = sCQL + "not youngdo in ('제1종일반주거지역','제1종전용주거지역','제2종일반주거지역','제3종일반주거지역','준주거지역','일반상업지역','일반공업지역','전용공업지역','준공업지역')"
   }
 
   // 운영여부에 조건이 있으면 닫기 )를 붙임
   if ((true == exclude01.checked) || (true == exclude02.checked)|| (true == exclude03.checked)|| (true == exclude04.checked))
     sCQL += ")"
 
-  console.log("sCQL=" + sCQL)
-
-  return sCQL;
+    return sCQL;
 }
 
 // geoserver에서 WFS 방식으로 자료를 받아와 openLayers에서 소스로 사용하도록 한다.
 
-//김문식 교수님 소스코드를 사용하면 필지선택전에 cql필터가 적용되기 때문에 변경
-// 시험문제 3번. geoserver에서 WFS 방식으로 자료를 받아오도록 URL을 구성한다.
-// 여기가 답 자리. 이 줄을 지우고 답을 적으세요.
+//김문식 교수님 소스코드를 사용하면 필지선택전에 cql필터가 적용되기 때문에 변경을 계속해주는 함수를 썼던 박소영 교수님 소스코드를 이용해야 한다. 김문식 교수님의 예제는 cql필터가 변경을 할 이유가 없기때문
 
-const wfsSource = new VectorSource
-(
-  { 
-    format: new GeoJSON(),        
-    url: encodeURI(g_url + "/geoserver/donghae/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=donghae:first_data" + "&outputFormat=application/json" + "&CQL_FILTER="+getCQL())
-  }
-);
+function WFSsearchmaker(method) {
+  wfsSource = new VectorSource
+    (
+      {
+        format: new GeoJSON(),
+        url: encodeURI(g_url + "/geoserver/donghae/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=donghae:first_data" + "&outputFormat=application/json" + "&CQL_FILTER="+getCQLsearch(method))
+      }
+    );
+
+  if (null != wfsLayer)
+    wfsLayer.setSource(wfsSource);
+};
+
+function WFSfiltermaker() {
+  wfsSource = new VectorSource
+    (
+      {
+        format: new GeoJSON(),
+        url: encodeURI(g_url + "/geoserver/donghae/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=donghae:first_data" + "&outputFormat=application/json" + "&CQL_FILTER="+getCQLfilter())
+      }
+    );
+
+  if (null != wfsLayer)
+    wfsLayer.setSource(wfsSource);
+};
+
+WFSfiltermaker("");//wfs함수초기화 선언하여 이 함수 선언에 따라 기본값이 전부 올라온다-
 
 // 위에서 wfs로 받아온 벡터 소스를 openLayers의 vector layer에 올린다.
 // 더 잘 보이게 스타일도 고친다.
-const wfsLayer = new VectorLayer
+wfsLayer = new VectorLayer
 (
   {
     source: wfsSource, 
@@ -120,8 +158,6 @@ const wfsLayer = new VectorLayer
     ) 
   }
 );
-
-
 // osm 레이어를 만든다.
 const osmLayer = new TileLayer
 (
@@ -280,124 +316,134 @@ map.on('click', (e) =>
 //   }
 //   );
     
-// const selectedStyle = new Style({//마우스 드래그로 선택하면 나타나는 안색상과 겉에선
-//   fill: new Fill({
-//     color: 'rgba(255, 255, 255, 0.6)',
-//   }),
-//   stroke: new Stroke({
-//     color: 'rgba(255, 255, 255, 0.7)',
-//     width: 2,
-//   }),
-// });
+const selectedStyle = new Style({//마우스 드래그로 선택하면 나타나는 안색상과 겉에선
+  fill: new Fill({
+    color: 'rgba(255, 255, 255, 0.6)',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(255, 255, 255, 0.7)',
+    width: 2,
+  }),
+});
 
-// // a normal select interaction to handle click
-// const select = new Select({
-//   style: function (feature) {
-//     const color = feature.get('COLOR_BIO') || '#eeeeee';
-//     selectedStyle.getFill().setColor(color);
-//     return selectedStyle;
-//   },
-// });
-// map.addInteraction(select);
+// a normal select interaction to handle click
+const select = new Select({
+  style: function (feature) {
+    const color = feature.get('COLOR_BIO') || '#eeeeee';
+    selectedStyle.getFill().setColor(color);
+    return selectedStyle;
+  },
+});
+map.addInteraction(select);
 
-// const selectedFeatures = select.getFeatures();
+const selectedFeatures = select.getFeatures();
 
-// // a DragBox interaction used to select features by drawing boxes
-// const dragBox = new DragBox({
-//   condition: platformModifierKeyOnly,
-// });
+// a DragBox interaction used to select features by drawing boxes
+const dragBox = new DragBox({
+  condition: platformModifierKeyOnly,
+});
 
-// map.addInteraction(dragBox);
+map.addInteraction(dragBox);
 
-// dragBox.on('boxend', function () {
-//   const boxExtent = dragBox.getGeometry().getExtent();
+dragBox.on('boxend', function () {
+  const boxExtent = dragBox.getGeometry().getExtent();
 
-//   // if the extent crosses the antimeridian process each world separately
-//   const worldExtent = map.getView().getProjection().getExtent();
-//   const worldWidth = getWidth(worldExtent);
-//   const startWorld = Math.floor((boxExtent[0] - worldExtent[0]) / worldWidth);
-//   const endWorld = Math.floor((boxExtent[2] - worldExtent[0]) / worldWidth);
+  // if the extent crosses the antimeridian process each world separately
+  const worldExtent = map.getView().getProjection().getExtent();
+  const worldWidth = getWidth(worldExtent);
+  const startWorld = Math.floor((boxExtent[0] - worldExtent[0]) / worldWidth);
+  const endWorld = Math.floor((boxExtent[2] - worldExtent[0]) / worldWidth);
 
-//   for (let world = startWorld; world <= endWorld; ++world) {
-//     const left = Math.max(boxExtent[0] - world * worldWidth, worldExtent[0]);
-//     const right = Math.min(boxExtent[2] - world * worldWidth, worldExtent[2]);
-//     const extent = [left, boxExtent[1], right, boxExtent[3]];
+  for (let world = startWorld; world <= endWorld; ++world) {
+    const left = Math.max(boxExtent[0] - world * worldWidth, worldExtent[0]);
+    const right = Math.min(boxExtent[2] - world * worldWidth, worldExtent[2]);
+    const extent = [left, boxExtent[1], right, boxExtent[3]];
 
-//     const boxFeatures = wfsSource
-//       .getFeaturesInExtent(extent)
-//       .filter(
-//         (feature) =>
-//           !selectedFeatures.getArray().includes(feature) &&
-//           feature.getGeometry().intersectsExtent(extent),
-//       );
+    const boxFeatures = wfsSource
+      .getFeaturesInExtent(extent)
+      .filter(
+        (feature) =>
+          !selectedFeatures.getArray().includes(feature) &&
+          feature.getGeometry().intersectsExtent(extent),
+      );
 
-//     // features that intersect the box geometry are added to the
-//     // collection of selected features
+    // features that intersect the box geometry are added to the
+    // collection of selected features
 
-//     // if the view is not obliquely rotated the box geometry and
-//     // its extent are equalivalent so intersecting features can
-//     // be added directly to the collection
-//     const rotation = map.getView().getRotation();
-//     const oblique = rotation % (Math.PI / 2) !== 0;
+    // if the view is not obliquely rotated the box geometry and
+    // its extent are equalivalent so intersecting features can
+    // be added directly to the collection
+    const rotation = map.getView().getRotation();
+    const oblique = rotation % (Math.PI / 2) !== 0;
 
-//     // when the view is obliquely rotated the box extent will
-//     // exceed its geometry so both the box and the candidate
-//     // feature geometries are rotated around a common anchor
-//     // to confirm that, with the box geometry aligned with its
-//     // extent, the geometries intersect
-//     if (oblique) {
-//       const anchor = [0, 0];
-//       const geometry = dragBox.getGeometry().clone();
-//       geometry.translate(-world * worldWidth, 0);
-//       geometry.rotate(-rotation, anchor);
-//       const extent = geometry.getExtent();
-//       boxFeatures.forEach(function (feature) {
-//         const geometry = feature.getGeometry().clone();
-//         geometry.rotate(-rotation, anchor);
-//         if (geometry.intersectsExtent(extent)) {
-//           selectedFeatures.push(feature);
-//         }
-//       });
-//     } else {
-//       selectedFeatures.extend(boxFeatures);
-//     }
-//   }
-// });
+    // when the view is obliquely rotated the box extent will
+    // exceed its geometry so both the box and the candidate
+    // feature geometries are rotated around a common anchor
+    // to confirm that, with the box geometry aligned with its
+    // extent, the geometries intersect
+    if (oblique) {
+      const anchor = [0, 0];
+      const geometry = dragBox.getGeometry().clone();
+      geometry.translate(-world * worldWidth, 0);
+      geometry.rotate(-rotation, anchor);
+      const extent = geometry.getExtent();
+      boxFeatures.forEach(function (feature) {
+        const geometry = feature.getGeometry().clone();
+        geometry.rotate(-rotation, anchor);
+        if (geometry.intersectsExtent(extent)) {
+          selectedFeatures.push(feature);
+        }
+      });
+    } else {
+      selectedFeatures.extend(boxFeatures);
+    }
+  }
+});
 
-// // clear selection when drawing a new box and when clicking on the map
-// dragBox.on('boxstart', function () {
-//   selectedFeatures.clear();
-// });
+// clear selection when drawing a new box and when clicking on the map
+dragBox.on('boxstart', function () {
+  selectedFeatures.clear();
+});
 
-// const infoBox = document.getElementById('info');
+const infoBox = document.getElementById('info');
 
-// selectedFeatures.on(['add', 'remove'], function () {
-//   const names = selectedFeatures.getArray().map((feature) => {
-//     return feature.get('address');
-//   });
-//   if (names.length > 0) {
-//     infoBox.innerHTML = names.join(', ');
-//   } else {
-//     infoBox.innerHTML = 'None';
-//   }
-// });
+selectedFeatures.on(['add', 'remove'], function () {
+  const names = selectedFeatures.getArray().map((feature) => {
+    return feature.get('address');
+  });
+  if (names.length > 0) {
+    infoBox.innerHTML = names.join(', ');
+  } else {
+    infoBox.innerHTML = 'None';
+  }
+});
+
+document.getElementById('sido01').onclick = () => {
+  console.log('dong01 clicked');
+  WFSsearchmaker('sido01');
+}
+
+document.getElementById('sido02').onclick = () => {
+  console.log('dong02 clicked');
+  WFSsearchmaker('sido02');
+}
 
 document.getElementById('exclude01').onchange = () => {
   console.log('exclude01 clicked');
-  getCQL();
+  WFSfiltermaker();
 }
 
 document.getElementById('exclude02').onchange = () => {
   console.log('exclude02 clicked');
-  getCQL();
+  WFSfiltermaker();
 }
 
 document.getElementById('exclude03').onchange = () => {
   console.log('exclude03 clicked');
-  getCQL();
+  WFSfiltermaker();
 }
 
 document.getElementById('exclude04').onchange = () => {
   console.log('exclude04 clicked');
-  getCQL();
+  WFSfiltermaker();
 }

@@ -11,7 +11,7 @@
 %>
 <% 	// 캠핑 정보를 가져온다.
     // 접속할 DBMS 주소 		
-    String url = "jdbc:postgresql://172.30.0.7/jjcvs";
+    String url = "jdbc:postgresql://172.30.0.7/donghae";
     
     // DBMS의 사용자 이름
     String user = "scott";
@@ -40,7 +40,7 @@
         Statement stmt_count = con.createStatement();        
 
         // 시험문제 7번. cvshop 테이블의 전체 데이터 갯수를 가져오는 쿼리를 만든다.
-        // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.
+        String qryCount="select count(*) as CCOUNT from first_data";
 
         ResultSet rs_count = stmt_count.executeQuery(qryCount);
         
@@ -57,7 +57,7 @@
         // DBMS에 쿼리할 준비를 한다.
         stmt = con.createStatement();
 
-        // 시험문제 8번. 실행할 쿼리문을 작성한다.
+        String qryCVS = "select * from first_data where id = "+id;
         // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.        
                 
         // select 쿼리를 실행한다. 검색 결과가 rs에 담긴다.
@@ -66,21 +66,21 @@
         // 자료가 1개 밖에 없는 게 확실하니 while이 아닌 if를 쓴다.
         if (rs_cvs.next())
         {
-            out.println("<H2>" + rs_cvs.getString("ID") + ". " + rs_cvs.getString("name") + "</H2>");            
+            out.println("<H2>" + rs_cvs.getString("ID") + ". " + rs_cvs.getString("address") + "</H2>");            
             
             out.print("<ul>");
 
-            out.println("<li>도로명 주소: " + rs_cvs.getString("addr_doro") + "</li>");
-            out.println("<li>지번 주소: " + rs_cvs.getString("addr_jibun") + "</li>");
+            out.println("<li>도로명 주소: " + rs_cvs.getString("jibun") + "</li>");
+            out.println("<li>지번 주소: " + rs_cvs.getString("area") + "</li>");
             
-            // 시험문제 9번. 전화번호가 표시되도록 한다.
+            out.println("<li>전화번호: " + rs_cvs.getString("price") + "</li>");
             // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.
 
             out.print("</ul>");
         } 			
         
         // 시험문제 10번. 서버 담당자가 메모리가 줄어들기만 하고 회복이 되지 않는다고 연락해 왔다. 쿼리 결과는 꼭 닫아주자.
-        // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.
+        rs_cvs.close();
         
         // 쿼리 실행기를 닫는다.
         stmt.close();

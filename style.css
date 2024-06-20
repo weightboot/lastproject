@@ -4,11 +4,64 @@ html, body {
   margin: 0;
   height: 100%;
 }
+
+.container {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#contents {
+  position: absolute;
+  top: 90px;
+  /* bottom: 20px; */
+  left: 0;
+  right: 0;
+}
+
+/* DIV영역 여러개를 나란히 놓으려면, float 속성을 이용 */
+/* left는 DIV 영역을 차례대로 왼쪽부터 정렬
+right는 DIV 영역을 역순으로 마지막 영역부터 왼쪽에서 정렬 */
+#menu1 {
+  width: 15%;
+  height: 100%;
+  float: left;
+  border-right: 1px solid #d4d4d4;
+  padding: 1px;
+}
+
+#menu2 {
+  width: 15%;
+  height: 100%;
+  float: left;
+  border-right: 1px solid #d4d4d4;
+  padding: 5px;
+}
+
+#mapArea {
+  /* position은 absolute로 지정하고 left 옵션을 주어 왼쪽에서 해당 위치 만큼 띄워줌 */
+  position: absolute;
+  height: 100%;
+  left: 41.5%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
 #map {
   position: absolute;
   top: 0;
   bottom: 0;
   width: 100%;
+  
+}
+
+#map2 {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 20%;
+  
 }
 
 #landyview 

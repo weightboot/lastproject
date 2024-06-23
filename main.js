@@ -64,11 +64,11 @@ function getCQLfilter()
   // filter도 filtersearch로 변경
   //운영여부에 조건이 있으면 열기 (를 붙임.
   if ((true == exclude01.checked) || (true == exclude02.checked)|| (true ==   exclude03.checked)|| (true == exclude04.checked))
-     if (0 < sCQL.length){
-       sCQL += " and "
+    //  if (0 < sCQL.length){
+    //    sCQL += " and "
 
     
-    sCQL += "(";}
+    sCQL += "(";//}
 
   if (true == exclude01.checked) {
     sCQL = sCQL + "not youngdo in ('제1종일반주거지역','제1종전용주거지역','제2종일반주거지역','제3종일반주거지역','준주거지역')"
@@ -76,32 +76,33 @@ function getCQLfilter()
 
   if (true == exclude02.checked) {
     if (sCQL.charAt(sCQL.length - 1) != '(')
-      sCQL += " or "
+      sCQL += " and "
     sCQL = sCQL + "not youngdo = '일반상업지역'"
   }
 
   if (true == exclude03.checked) {
     if (sCQL.charAt(sCQL.length - 1) != '(')
-      sCQL += " or "
+      sCQL += " and "
     sCQL = sCQL + "not youngdo in ('일반공업지역','전용공업지역','준공업지역')"
   }
 
   if (true == exclude04.checked) {
     if (sCQL.charAt(sCQL.length - 1) != '(')
-      sCQL += " or "
+      sCQL += " and "
     sCQL = sCQL + "not youngdo in ('제1종일반주거지역','제1종전용주거지역','제2종일반주거지역','제3종일반주거지역','준주거지역','일반상업지역','일반공업지역','전용공업지역','준공업지역')"
   }
 
   // 운영여부에 조건이 있으면 닫기 )를 붙임
   if ((true == exclude01.checked) || (true == exclude02.checked)|| (true == exclude03.checked)|| (true == exclude04.checked))
-    sCQL += ")"
-
+    sCQL += ")";
+  console.log(sCQL);
     return sCQL;
 }
 
 // geoserver에서 WFS 방식으로 자료를 받아와 openLayers에서 소스로 사용하도록 한다.
 
 //김문식 교수님 소스코드를 사용하면 필지선택전에 cql필터가 적용되기 때문에 변경을 계속해주는 함수를 썼던 박소영 교수님 소스코드를 이용해야 한다. 김문식 교수님의 예제는 cql필터가 변경을 할 이유가 없기때문
+//그 문제가 아니라 김문식 교수님은 불러오는 방법이 다른걸 암 근데 그걸 적용 시켜 할려고 해도 초기 선언을 어떻게 해야할지 모르겠다;
 
 function WFSsearchmaker(method) {
   wfsSource = new VectorSource
@@ -129,7 +130,7 @@ function WFSfiltermaker() {
     wfsLayer.setSource(wfsSource);
 };
 
-WFSfiltermaker("");//wfs함수초기화 선언하여 이 함수 선언에 따라 기본값이 전부 올라온다-
+
 
 // 위에서 wfs로 받아온 벡터 소스를 openLayers의 vector layer에 올린다.
 // 더 잘 보이게 스타일도 고친다.
@@ -166,7 +167,7 @@ const osmLayer = new TileLayer
   }
 );
 
-
+WFSfiltermaker("");//wfs함수초기화 선언하여 이 함수 선언에 따라 기본값이 전부 올라온다-
 // 마우스가 WFS 필지 위로 올라갈 때(hover) 처리
 const mouseHoverSelect = new Select
 (
@@ -259,6 +260,7 @@ map.on('click', (e) =>
 //     // 이 point와 같이 넘어온 메타데이터 값을 찾는다.
     
     let id = feature.get('id');
+    let pnu = feature.get('pnu');
     let address = feature.get('address');
     let jibun = feature.get('jibun');
     let area = feature.get('area');
@@ -274,7 +276,14 @@ map.on('click', (e) =>
     document.getElementById("cvs_addr_doro").innerHTML = area;
     document.getElementById("cvs_addr_jibun").innerHTML = youngdo;
     document.getElementById("cvs_tel").innerHTML = price;
-    
+
+    // document.getElementById("pun_window").innerHTML = pnu;
+    // document.getElementById("address_window").innerHTML = address;
+    // document.getElementById("jibun_window").innerHTML = jibun;
+    // document.getElementById("area_window").innerHTML = area;
+    // document.getElementById("youngdo_window").innerHTML = youngdo;
+    // document.getElementById("price_window").innerHTML = price;
+
 //     // 오버레이 창을 띄운다.
     overlayLayer.setPosition(e.coordinate);
 

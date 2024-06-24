@@ -34,7 +34,8 @@ SELECT
     info."c.v score",
     info.hubscore,
     infoscore.score AS sumscore,
-    infoscore.grade
+    infoscore.grade,
+    info.geom
 FROM info
 left JOIN infoscore ON
 info.pnu = infoscore.pnu

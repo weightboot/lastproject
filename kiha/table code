@@ -1,4 +1,8 @@
 // infoscore 테이블 생성
-create table infoscore (id int generated always as identity primary key, score int);
+drop table infoscore;
 
+create table infoscore (id int generated always as identity primary key, pnu varchar(21), score int);
 
+INSERT INTO infoscore (pnu, score)
+SELECT pnu, (sscore + "c.v score" + hubscore + hscore) AS score
+FROM info;

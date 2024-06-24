@@ -20,6 +20,26 @@ SELECT
     END AS grade
 FROM info;
 
+CREATE VIEW info_view AS
+SELECT 
+    info.id,
+    info.pnu,
+    info.address,
+    info.jibun,
+    info.jibuncode,
+    info.area,
+    info.youngdo,
+    info.price,
+    info.hscore,
+    info.sscore,
+    info."c.v score",
+    info.hubscore,
+    infoscore.score AS sumscore,
+    infoscore.grade
+FROM info
+left JOIN infoscore ON
+info.pnu = infoscore.pnu
+
 
 //3. hscore에 null값이 있을때 null값 대신에 평균값으로 대체하는 쿼리 (시간있으면 반영)
 -- 1. hscore의 평균 값을 계산하는 서브쿼리 작성
@@ -44,6 +64,7 @@ SELECT
     info."c.v score",
     info.hubscore,
     infoscore.score AS sumscore
+    infoscore.grade
 FROM info
 JOIN infoscore ON info.id = infoscore.info_id
 JOIN avg_hscore ON TRUE; -- 서브쿼리를 뷰의 다른 필드와 결합

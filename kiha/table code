@@ -22,7 +22,6 @@ FROM info;
 
 CREATE VIEW info_view AS
 SELECT 
-    info.id,
     info.pnu,
     info.address,
     info.jibun,
@@ -39,6 +38,7 @@ SELECT
 FROM info
 left JOIN infoscore ON
 info.pnu = infoscore.pnu
+order by pnu;
 
 
 //3. hscore에 null값이 있을때 null값 대신에 평균값으로 대체하는 쿼리 (시간있으면 반영)

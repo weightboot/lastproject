@@ -6,3 +6,22 @@ create table infoscore (id int generated always as identity primary key, pnu var
 INSERT INTO infoscore (pnu, score)
 SELECT pnu, (sscore + "c.v score" + hubscore + hscore) AS score
 FROM info;
+
+create or replace view info_view as
+select 
+info.id as ID
+,info.pnu as pnu
+,info.address
+,info.jibun
+,info.jibuncode
+,info.area
+,info.youngdo
+,info.price
+,info.hscore
+,info.sscore
+,info."c.v score"
+,info.hubscore
+,infoscore.score as sumscore
+from info
+left join infoscore 
+on info.pnu=infoscore.pnu;

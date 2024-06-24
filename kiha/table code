@@ -1,31 +1,25 @@
-//1. infoscore 테이블 생성
-drop table infoscore;
+DROP TABLE IF EXISTS infoscore;
 
-create table infoscore (id int generated always as identity primary key, pnu varchar(21), score int);
+CREATE TABLE infoscore (
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    pnu VARCHAR(21),
+    score INT,
+    grade VARCHAR(10)
+);
 
-INSERT INTO infoscore (pnu, score)
-SELECT pnu, (sscore + "c.v score" + hubscore + hscore) AS score
+INSERT INTO infoscore (pnu, score, grade)
+SELECT 
+    pnu, 
+    (sscore + "c.v score" + hubscore + hscore) AS score,
+    CASE 
+        WHEN (sscore + "c.v score" + hubscore + hscore) >= 351 THEN '마'
+        WHEN (sscore + "c.v score" + hubscore + hscore) >= 262 THEN '라'
+        WHEN (sscore + "c.v score" + hubscore + hscore) >= 155 THEN '다'
+        WHEN (sscore + "c.v score" + hubscore + hscore) >= 38 THEN '나'
+        ELSE '가'
+    END AS grade
 FROM info;
 
-//2. viewtable 생성
-create or replace view info_view as
-select 
-info.id as ID
-,info.pnu as pnu
-,info.address
-,info.jibun
-,info.jibuncode
-,info.area
-,info.youngdo
-,info.price
-,info.hscore
-,info.sscore
-,info."c.v score"
-,info.hubscore
-,infoscore.score as sumscore
-from info
-left join infoscore 
-on info.pnu=infoscore.pnu;
 
 //3. hscore에 null값이 있을때 null값 대신에 평균값으로 대체하는 쿼리 (시간있으면 반영)
 -- 1. hscore의 평균 값을 계산하는 서브쿼리 작성

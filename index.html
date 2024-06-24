@@ -73,7 +73,7 @@
               </tr>
             </table>
           </div>
-          <div class="contents2">
+          <!-- <div class="contents2">
             <h3> 선택한 토지 정보</h3>
             <ul class="statues_window">
               <li>PNU 번호 : <span id="pnu_window"></span></li>
@@ -82,26 +82,27 @@
               <li>면적 :<span id="area_window"></span></li>
               <li>용도지역 :<span id="youngdo_window"></span></li>
               <li>공시지가 :<span id="price_window"></span></li>
-              <!-- <li>지표별 평가점수 :<span id="land_score"></span></li>
+              <li>지표별 평가점수 :<span id="land_score"></span></li>
               <li>특성별 적성값 :<span id="char_score"></span></li>
-              <li>종합 적성값 :<span id="total_score"></span></li> -->
+              <li>종합 적성값 :<span id="total_score"></span></li>
             </ul>
-          </div>
-          <div class="contents3">
+          </div> -->
+          <!-- <div class="contents3">
             <tr>
               <th> 점수 입력창 </th>
               <td>
                 <br>
-              <form>
+              <form action="./insert.jsp">
                 지표별 평가점수 입력<input type="text" id="land_score_submit"><br>
                 특성별 적성값 입력<input type="text" id="char_score_submit"><br>
                 종합적성값 입력<input type="text" id="total_score_submit"><br>
+                <input type="submit" id="score_submit" value="저장"><br>
                 <button id ='score_submit' type='button'>입력</button>
                 <button id ='score_delete' type='button'>삭제</button>
               </form>
               </td>
             </tr>
-          </div>
+          </div> -->
           
         </div> <!-- menu2 닫힘 -->
         
@@ -116,11 +117,21 @@
     <div id="landyview">
       <a href="" id="jspurl"><h3 id="cvs_id"></h3></a>      
       <ul>
+        <li>PNU: <span id="pnu"></span></li>
         <li>지번: <span id="cvs_name"></span></li>
         <li>면적: <span id="cvs_addr_doro"></span>㎡</li>
         <li>용도지역: <span id="cvs_addr_jibun"></span></li>
         <li>공시지가: <span id="cvs_tel"></span>원</li>
       </ul>
+      <form action="./insert.jsp?sql_id=" method="get" id="">
+        지표별 평가점수 입력<input type="text" id="land_score_submit" name="land_score_submit"><br>
+        특성별 적성값 입력<input type="text" id="char_score_submit" name="char_score_submit"><br>
+        종합적성값 입력<input type="text" id="total_score_submit" name="total_score_submit"><br>
+        <input type="hidden" id="sql_id" name="sql_id">
+        <input type="submit" value="저장"><br>
+        <!-- <button id ='score_submit' type='button'>입력</button> -->
+        <!-- <button id ='score_delete' type='button'>삭제</button> -->
+      </form>
     </div>
 
     <script type="module" src="./main.js"></script>

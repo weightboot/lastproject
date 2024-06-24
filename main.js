@@ -260,6 +260,7 @@ map.on('click', (e) =>
 //     // 이 point와 같이 넘어온 메타데이터 값을 찾는다.
     
     let id = feature.get('id');
+    //let sql_id = feature.get('sql_id');
     let pnu = feature.get('pnu');
     let address = feature.get('address');
     let jibun = feature.get('jibun');
@@ -272,11 +273,15 @@ map.on('click', (e) =>
 //     // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.
     document.getElementById("jspurl").href = "info.jsp?cvsid="+id;
     document.getElementById("cvs_id").innerHTML = address;
+    document.getElementById("pnu").innerHTML = pnu;
     document.getElementById("cvs_name").innerHTML = jibun;
     document.getElementById("cvs_addr_doro").innerHTML = area;
     document.getElementById("cvs_addr_jibun").innerHTML = youngdo;
     document.getElementById("cvs_tel").innerHTML = price;
-
+    //document.getElementById("sql_id").innerHTML = id;
+    let name_field = document.getElementById("sql_id");
+    name_field.value=id;//강제로 값을 변경
+    //alert(id);
     // document.getElementById("pun_window").innerHTML = pnu;
     // document.getElementById("address_window").innerHTML = address;
     // document.getElementById("jibun_window").innerHTML = jibun;
@@ -291,6 +296,7 @@ map.on('click', (e) =>
   
 }
 );
+
 
 // map.on('click', (e) =>
 //   {

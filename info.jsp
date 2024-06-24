@@ -7,7 +7,7 @@
 </head>
 <body>
 <%
-    String id = request.getParameter("cvsid");
+    String id = request.getParameter("cvsid");  
 %>
 <% 	// 캠핑 정보를 가져온다.
     // 접속할 DBMS 주소 		
@@ -75,6 +75,10 @@
             
             out.println("<li>전화번호: " + rs_cvs.getString("price") + "</li>");
             // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.
+
+            out.println("<li>전화번호: " + rs_cvs.getString("land_score") + "</li>");
+            out.println("<li>전화번호: " + rs_cvs.getString("char_score") + "</li>");
+            out.println("<li>전화번호: " + rs_cvs.getString("total_score") + "</li>");
 
             out.print("</ul>");
         } 			

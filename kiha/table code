@@ -1,0 +1,4 @@
+// infoscore 테이블 생성
+create table infoscore (id int generated always as identity primary key, score int);
+
+

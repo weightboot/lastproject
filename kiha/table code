@@ -1,4 +1,4 @@
-// infoscore 테이블 생성
+//1. infoscore 테이블 생성
 drop table infoscore;
 
 create table infoscore (id int generated always as identity primary key, pnu varchar(21), score int);
@@ -7,7 +7,7 @@ INSERT INTO infoscore (pnu, score)
 SELECT pnu, (sscore + "c.v score" + hubscore + hscore) AS score
 FROM info;
 
-// viewtable 생성
+//2. viewtable 생성
 create or replace view info_view as
 select 
 info.id as ID
@@ -26,3 +26,30 @@ info.id as ID
 from info
 left join infoscore 
 on info.pnu=infoscore.pnu;
+
+//3. hscore에 null값이 있을때 null값 대신에 평균값으로 대체하는 쿼리 (시간있으면 반영)
+-- 1. hscore의 평균 값을 계산하는 서브쿼리 작성
+WITH avg_hscore AS (
+    SELECT AVG(hscore) AS avg_hscore
+    FROM info
+)
+
+-- 2. NULL 값을 평균 값으로 대체하여 뷰 생성
+CREATE VIEW info_view AS
+SELECT 
+    info.id,
+    info.pnu,
+    info.address,
+    info.jibun,
+    info.jibuncode,
+    info.area,
+    info.youngdo,
+    info.price,
+    COALESCE(info.hscore, avg_hscore.avg_hscore) AS hscore, -- NULL 값을 평균 값으로 대체
+    info.sscore,
+    info."c.v score",
+    info.hubscore,
+    infoscore.score AS sumscore
+FROM info
+JOIN infoscore ON info.id = infoscore.info_id
+JOIN avg_hscore ON TRUE; -- 서브쿼리를 뷰의 다른 필드와 결합

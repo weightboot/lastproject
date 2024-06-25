@@ -334,6 +334,15 @@ map.on('click', (e) =>
     let youngdo = feature.get('youngdo');
     let price = feature.get('price');
 
+    //---------------------------------------------------
+    let pnu_window = feature.get('pnu');
+    let address_window = feature.get('address');
+    let jibun_window = feature.get('jibun');
+    let area_window = feature.get('area');
+    let youngdo_window = feature.get('youngdo');
+    let price_window = feature.get('price');
+    //---------------------------------------------------
+
 //     // 오버레이를 위한 div에 값들을 적는다.
     
 //     // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.
@@ -348,14 +357,17 @@ map.on('click', (e) =>
     let name_field = document.getElementById("sql_id");
     name_field.value=id;//강제로 값을 변경
     //alert(id);
-    // document.getElementById("pun_window").innerHTML = pnu;
-    // document.getElementById("address_window").innerHTML = address;
-    // document.getElementById("jibun_window").innerHTML = jibun;
-    // document.getElementById("area_window").innerHTML = area;
-    // document.getElementById("youngdo_window").innerHTML = youngdo;
-    // document.getElementById("price_window").innerHTML = price;
+//오타를 확인하는 습관을 들이자 오타 하나때매 멀쩡히 되는 기능 안되게 개쌩쇼를함
+//---------------------------------------------------
+    document.getElementById("pnu_window").innerHTML = pnu_window;
+    document.getElementById("address_window").innerHTML = address_window;
+    document.getElementById("jibun_window").innerHTML = jibun_window;
+    document.getElementById("area_window").innerHTML = area_window;
+    document.getElementById("youngdo_window").innerHTML = youngdo_window;
+    document.getElementById("price_window").innerHTML = price_window;
+//---------------------------------------------------
 
-//     // 오버레이 창을 띄운다.
+    // 오버레이 창을 띄운다.
     overlayLayer.setPosition(e.coordinate);
 
   })
@@ -380,18 +392,14 @@ map.on('click', (e) =>
 //       let area_window = feature.get('area');
 //       let youngdo_window = feature.get('youngdo');
 //       let price_window = feature.get('price');
-//   //     // 오버레이를 위한 div에 값들을 적는다.
-      
-//   //     // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.
-//     document.getElementById("pun_window").innerHTML = pnu_window;
+
+//     document.getElementById("pnu_window").innerHTML = pnu_window;
 //     document.getElementById("address_window").innerHTML = address_window;
 //     document.getElementById("jibun_window").innerHTML = jibun_window;
 //     document.getElementById("area_window").innerHTML = area_window;
 //     document.getElementById("youngdo_window").innerHTML = youngdo_window;
 //     document.getElementById("price_window").innerHTML = price_window;
-      
-      
-  
+          
 //     })
     
 //   }

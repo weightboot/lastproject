@@ -27,29 +27,29 @@ var wfsLayer;
 var wfsSource;
 
 // 테스트 환경과 실제 tomcat 서버에 올렸을 때의 url이 다르니 g_url 변수를 이용한다.
-//const g_url = "http://172.20.221.167:42888";
+//const g_url = "http://172.20.221.167:42888";//시연 대비용
 const g_url = "http://localhost:42888";//내부서버 확인용
 
 /**
  * CQL 필터 만들기. 모든 CQL은 이 함수를 통한다.
  */
-function getCQLsearch(method) {
-  let filter = "";
+// function getCQLsearch(method) {
+//   let filter = "";
 
-  if ('sido01' == method)
-    filter = "address = '서울특별시 강남구 대치동'"
+//   if ('sido01' == method)
+//     filter = "address = '서울특별시 강남구 대치동'"
 
-  else if ('sido02' == method)
-    filter = "address = '서울특별시 강남구 도곡동'";
+//   else if ('sido02' == method)
+//     filter = "address = '서울특별시 강남구 도곡동'";
 
-  else if ('sido03' == method)
-    filter = "address = '서울특별시 강남구 삼성동'";
+//   else if ('sido03' == method)
+//     filter = "address = '서울특별시 강남구 삼성동'";
 
-  else if ('sido04' == method)
-    filter = "address = '서울특별시 강남구 압구정동'";
+//   else if ('sido04' == method)
+//     filter = "address = '서울특별시 강남구 압구정동'";
 
-    return filter;
-}
+//     return filter;
+// }
 
 function getCQLfilter()
 {
@@ -61,13 +61,15 @@ function getCQLfilter()
   const exclude03 = document.getElementById("exclude03");
   const exclude04 = document.getElementById("exclude04");
 
+  const slant01 = document.getElementById("slant01");
+  const slant02 = document.getElementById("slant02");
+  const slant03 = document.getElementById("slant03");
+  const slant04 = document.getElementById("slant04");
+
   // filter도 filtersearch로 변경
   //운영여부에 조건이 있으면 열기 (를 붙임.
   if ((true == exclude01.checked) || (true == exclude02.checked)|| (true ==   exclude03.checked)|| (true == exclude04.checked))
-    //  if (0 < sCQL.length){
-    //    sCQL += " and "
 
-    
     sCQL += "(";//}
 
   if (true == exclude01.checked) {
@@ -94,9 +96,72 @@ function getCQLfilter()
 
   // 운영여부에 조건이 있으면 닫기 )를 붙임
   if ((true == exclude01.checked) || (true == exclude02.checked)|| (true == exclude03.checked)|| (true == exclude04.checked))
+    if (0 < sCQL.length)
     sCQL += ")";
-  console.log(sCQL);
-    return sCQL;
+  
+    
+  if ((true == slant01.checked) || (true == slant02.checked) || (true == slant03.checked) || (true == slant04.checked)) {
+    if (0 < sCQL.length)
+      sCQL += " and "
+    sCQL += "(";
+  }
+
+  if (true == slant01.checked) {
+    sCQL += "slant = '평지' or slant = '저지'"
+  }
+
+  if (true == slant02.checked) {
+    if (sCQL.charAt(sCQL.length - 1) != '(')
+      sCQL += " or "
+    sCQL += "slant='완경사'"
+  }
+
+  if (true == slant03.checked) {
+    if (sCQL.charAt(sCQL.length - 1) != '(')
+      sCQL += " or "
+    sCQL += "slant='급경사'"
+  }
+
+  if (true == slant04.checked) {
+    if (sCQL.charAt(sCQL.length - 1) != '(')
+      sCQL += " or "
+    sCQL += "slant='고지'"
+  }
+
+  if ((true == slant01.checked) || (true == slant02.checked) || (true == slant03.checked) || (true == slant04.checked))
+    sCQL += ")"
+  console.log("filter=" + sCQL)
+      return sCQL;
+}
+
+function getFeatureStyle(feature) {
+  const slant = feature.get('slant');
+  const slant01 = document.getElementById("slant01").checked;
+  const slant02 = document.getElementById("slant02").checked;
+  const slant03 = document.getElementById("slant03").checked;
+  const slant04 = document.getElementById("slant04").checked;
+
+  let color = 'rgba(145, 145, 145, 0.6)'; // 기본 회색
+
+  if (slant01 && (slant === '평지' || slant === '저지')) {
+    color = 'rgba(0, 255, 0, 0.6)'; // 녹색
+  } else if (slant02 && slant === '완경사') {
+    color = 'rgba(255, 255, 0, 0.6)'; // 노란색
+  } else if (slant03 && slant === '급경사') {
+    color = 'rgba(255, 165, 0, 0.6)'; // 주황색
+  } else if (slant04 && slant === '고지') {
+    color = 'rgba(255, 0, 0, 0.6)'; // 빨간색
+  }
+
+  return new Style({
+    stroke: new Stroke({
+      color: 'rgba(255, 255, 255, 0.4)',
+      width: 1
+    }),
+    fill: new Fill({
+      color: color
+    })
+  });
 }
 
 // geoserver에서 WFS 방식으로 자료를 받아와 openLayers에서 소스로 사용하도록 한다.
@@ -104,18 +169,18 @@ function getCQLfilter()
 //김문식 교수님 소스코드를 사용하면 필지선택전에 cql필터가 적용되기 때문에 변경을 계속해주는 함수를 썼던 박소영 교수님 소스코드를 이용해야 한다. 김문식 교수님의 예제는 cql필터가 변경을 할 이유가 없기때문
 //그 문제가 아니라 김문식 교수님은 불러오는 방법이 다른걸 암 근데 그걸 적용 시켜 할려고 해도 초기 선언을 어떻게 해야할지 모르겠다;
 
-function WFSsearchmaker(method) {
-  wfsSource = new VectorSource
-    (
-      {
-        format: new GeoJSON(),
-        url: encodeURI(g_url + "/geoserver/donghae/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=donghae:first_data" + "&outputFormat=application/json" + "&CQL_FILTER="+getCQLsearch(method))
-      }
-    );
+// function WFSsearchmaker(method) {
+//   wfsSource = new VectorSource
+//     (
+//       {
+//         format: new GeoJSON(),
+//         url: encodeURI(g_url + "/geoserver/donghae/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=donghae:first_data" + "&outputFormat=application/json" + "&CQL_FILTER="+getCQLsearch(method))
+//       }
+//     );
 
-  if (null != wfsLayer)
-    wfsLayer.setSource(wfsSource);
-};
+//   if (null != wfsLayer)
+//     wfsLayer.setSource(wfsSource);
+// };
 
 function WFSfiltermaker() {
   wfsSource = new VectorSource
@@ -138,25 +203,26 @@ wfsLayer = new VectorLayer
 (
   {
     source: wfsSource, 
-    style: new Style
-    (
-       {
-         stroke: new Stroke
-         (
-           {
-             color: 'rgba(255, 255, 255, 0.4)',
-             width: 1
-           }
-         ),
+    style: function(feature) { return getFeatureStyle(feature);}
+    // style: new Style
+    // (
+    //    {
+    //      stroke: new Stroke
+    //      (
+    //        {
+    //          color: 'rgba(255, 255, 255, 0.4)',
+    //          width: 1
+    //        }
+    //      ),
 
-         fill: new Fill
-         (
-           {
-             color: 'rgba(145, 145, 145, 0.6)'
-           }
-         )
-       }
-    ) 
+    //      fill: new Fill
+    //      (
+    //        {
+    //          color: 'rgba(145, 145, 145, 0.6)'
+    //        }
+    //      )
+    //    }
+    // ) 
   }
 );
 // osm 레이어를 만든다.
@@ -433,15 +499,15 @@ selectedFeatures.on(['add', 'remove'], function () {
   }
 });
 
-document.getElementById('sido01').onclick = () => {
-  console.log('dong01 clicked');
-  WFSsearchmaker('sido01');
-}
+// document.getElementById('sido01').onclick = () => {
+//   console.log('dong01 clicked');
+//   WFSsearchmaker('sido01');
+// }
 
-document.getElementById('sido02').onclick = () => {
-  console.log('dong02 clicked');
-  WFSsearchmaker('sido02');
-}
+// document.getElementById('sido02').onclick = () => {
+//   console.log('dong02 clicked');
+//   WFSsearchmaker('sido02');
+// }
 
 document.getElementById('exclude01').onchange = () => {
   console.log('exclude01 clicked');
@@ -459,6 +525,26 @@ document.getElementById('exclude03').onchange = () => {
 }
 
 document.getElementById('exclude04').onchange = () => {
+  console.log('exclude04 clicked');
+  WFSfiltermaker();
+}
+
+document.getElementById('slant01').onchange = () => {
+  console.log('exclude04 clicked');
+  WFSfiltermaker();
+}
+
+document.getElementById('slant02').onchange = () => {
+  console.log('exclude04 clicked');
+  WFSfiltermaker();
+}
+
+document.getElementById('slant03').onchange = () => {
+  console.log('exclude04 clicked');
+  WFSfiltermaker();
+}
+
+document.getElementById('slant04').onchange = () => {
   console.log('exclude04 clicked');
   WFSfiltermaker();
 }

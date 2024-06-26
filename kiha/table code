@@ -73,12 +73,11 @@ JOIN avg_hscore ON TRUE; -- 서브쿼리를 뷰의 다른 필드와 결합
 
 
 //login 
-create table login 
-(id int generated always as identity primary key
-, userId varchar(20)
-, password varchar(20)
-, name varchar(10)
-, phone varchar(13)
+create table login (id int generated always as identity primary key
+, userId varchar(20) not null
+, password varchar(20) not null
+, name varchar(10) not null
+, phone varchar(13) not null
 , gender char(1) check(gender in('m', 'f')));
 
 insert into login (userId, password, name, phone, gender) values

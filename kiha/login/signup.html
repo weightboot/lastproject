@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>회원가입</title>
+    <link rel="stylesheet" href="./signup.css"> 
+  </head>
+<body>
+
+  <div class="signup-wrapper">
+    <h2>회원가입</h2>
+    
+    <form action="signup.jsp" method="post" class="signup-form">
+      <label for="userid">아 이 디 :</label>
+      <input type="text" id="userid" name="userid"><br/>
+      
+      <label for="password">비밀번호 :</label>
+      <input type="password" id="password" name="password"><br/>
+      
+      <label for="name">이    름 :</label>
+      <input type="text" id="name" name="name"><br/>
+      
+      <label for="phone">전화번호 :</label>
+      <input type="text" id="phone" name="phone" class="phone-input" placeholder="000-0000-0000" size="13"><br/>
+      
+      <label>성별 : &nbsp;
+      <input type="radio" name="gender" value="m" checked>남자
+      <input type="radio" name="gender" value="f">여자<br/>
+      </label>
+
+      <input type="submit" value="가입">
+    </form>
+  </div>
+
+</body>
+</html>

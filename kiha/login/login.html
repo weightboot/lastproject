@@ -1,31 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <title>Using OpenLayers with Vite</title>
+    <title>LX토지적성평가 시스템</title>
     <link rel="stylesheet" href="./login.css"> 
-  </head>
-  <body>
+</head>
+<body>
     <div class="login-wrapper">
-      <h2> LX토지적성평가 시스템 </h2>
-      <form method="post" action="./login.jsp" id="login-form">
-          <input type="text" name="userId" placeholder="userID">
-          <input type="password" name="password" placeholder="Password">
-          <label for="remember-check">
-              <input type="checkbox" id="remember-check">&nbsp; 아이디 저장 &nbsp;  
-          </label>
-          <label for="signup-check">
-            <input type="checkbox" id="signup-check">&nbsp; 회원가입
-          </label>
-          <input type="submit" value="Login">
-      </form>
-   </div>
-   <script>
-    document.getElementById('signup-check').addEventListener('change', function() {
-      if (this.checked) {
-        window.location.href = 'signup.html';
-      }
-    });
-  </script>
-  </body>
+        <h2>LX토지적성평가 시스템</h2>
+        <form method="post" action="./login.jsp" id="login-form">
+            <input type="text" name="userId" placeholder="User ID">
+            <input type="password" name="password" placeholder="Password">
+            <div class="checkbox-wrapper">
+                <label for="remember-check">
+                    <input type="checkbox" id="remember-check">
+                    아이디 저장
+                </label>
+                <label for="signup-check">
+                  &nbsp;&nbsp;<input type="checkbox" id="signup-check">
+                     회원가입
+                </label>
+            </div>
+            <input type="submit" value="Login">
+        </form>
+    </div>
+    <script>
+        document.getElementById('signup-check').addEventListener('change', function() {
+            if (this.checked) {
+                window.location.href = 'signup.html';
+            }
+        });
+    </script>
+</body>
 </html>

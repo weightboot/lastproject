@@ -72,7 +72,7 @@
             response.sendRedirect("http://localhost:42888/");
         } else {
             // 로그인 실패 시 리다이렉트한다.
-            response.sendRedirect("login_fail.jsp");
+            response.sendRedirect("login_fail.html");
         }
         
         // ResultSet을 닫는다.

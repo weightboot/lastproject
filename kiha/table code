@@ -1,3 +1,49 @@
+// high 테이블 생성
+create table high
+(id int, pnu varchar(20), high int, hscore int);
+
+INSERT INTO high (id, pnu, high)
+SELECT id, pnu, high
+FROM (
+    SELECT id, pnu, high
+    FROM info
+    ORDER BY pnu
+) AS sorted_info;
+
+UPDATE high
+SET hscore = CASE
+    WHEN high <= 50 THEN 100
+    WHEN high >= 51 and high <= 100 THEN 75
+	WHEN high >= 101 and high <= 150 THEN 50
+	WHEN high >= 151 and high <= 200 THEN 25
+    ELSE 0
+    END;
+
+// high 테이블 트리거생성 (hscore의 값 자동업데이트를 위한)
+CREATE OR REPLACE FUNCTION calculate_hscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- NEW는 새로 삽입하거나 업데이트된 행을 나타냅니다.
+    NEW.hscore := CASE
+        WHEN NEW.high <= 50 THEN 100
+        WHEN NEW.high >= 51 AND NEW.high <= 100 THEN 75
+        WHEN NEW.high >= 101 AND NEW.high <= 150 THEN 50
+        WHEN NEW.high >= 151 AND NEW.high <= 200 THEN 25
+        ELSE 0
+    END;
+
+    -- 트리거 함수는 항상 NEW를 반환해야 합니다.
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- high 테이블에 트리거 생성
+CREATE TRIGGER calculate_hscore_trigger
+BEFORE INSERT OR UPDATE ON high
+FOR EACH ROW
+EXECUTE FUNCTION calculate_hscore_function();
+
+//
 DROP TABLE IF EXISTS infoscore;
 
 CREATE TABLE infoscore (

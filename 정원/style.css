@@ -1,0 +1,333 @@
+@import "node_modules/ol/ol.css";
+/* 폰트 적용 시작 */
+@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
+
+html {
+  font-family: 'Indie Flower', cursive;
+}
+
+/* 폰트적용 끝 */
+
+/* 노멀라이즈 시작 */
+body,
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* 사이트의 높이를 5000px로 만들어 스크롤 생성 */
+body {
+  height: 1000px;
+  background-color: white;
+}
+
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 노멀라이즈 끝 */
+
+
+#header {
+  height: 200px;
+  border-bottom: 3px solid #000000;
+}
+
+
+/* 라이브러리 시작 */
+/*사이트의 모든 요소에 사용될 수 있는 값은 별도로 라이브러리로 정리할 수 있다.*/
+
+/*사이트의 중앙에 위치하도록 결정 */
+.con {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* inline-grid */
+.text-align-center {
+  text-align: center;
+}
+
+.inline-grid {
+  font-size: 0;
+}
+
+.inline-grid>* {
+  font-size: 1rem;
+  display: inline-block;
+  vertical-align: top;
+  box-sizing: border-box;
+}
+
+/* inline-grid 끝*/
+
+/* 사이트의 최소 너비 결정 */
+.con-min-width {
+  min-width: 1200px;
+  padding: 0 10px;
+
+}
+
+/* 라이브러리 끝 */
+
+/* 커스텀 시작 */
+/* 해당 값은 해당 요소에서만 사용되는 값이므로 별도로 정리한다 */
+.con {
+  width: 1100px;
+}
+
+/* 메뉴바 시작 */
+/* <li>의 display 값은 기본적으로 block의 형태이므로 inline-block 값으로 바꿔준다 */
+.menu-bar__menu-box-1>ul>li {
+  display: inline-block;
+  color: #000000;
+}
+
+/* inline-block 형태는 text-align을 통해 정렬이 가능하다 */
+.menu-bar__menu-box-1>ul {
+  text-align: center;
+}
+
+/* <a>와 <span>의 display 값은 기본적으로 inline의 형태이므로 text-align을 통해 정렬이 가능하다 */
+.logo-bar>div {
+  text-align: center;
+}
+
+.logo-bar>div>.logo-bar__logo {
+  font-size: 5rem;
+  text-decoration: underline;
+  color:  #000000;
+  cursor: default;
+}
+
+.menu-bar__menu-box-1>ul>li>a {
+  display: block;
+  font-size: 2rem;
+  padding: 10px 30px;
+}
+
+.menu-bar__menu-box-1>ul>li:hover>a {
+  color: #17B978;
+  text-decoration: underline;
+}
+.logo-bar>div>.logo-bar__logo>span>span:nth-of-type(1) {
+  color: #17B978;
+}
+
+.logo-bar>div>.logo-bar__logo>span>span:nth-of-type(2) {
+  color: #000000;
+}
+
+.logo-bar>div>.logo-bar__logo>span>span:nth-of-type(3) {
+  color: #000000;
+}
+
+
+/* 메뉴바 끝 */
+
+/* 커스텀 끝 */
+
+/* 기본 체크박스 설정 */
+  input[type="checkbox"] {
+  position: absolute;
+  cursor: pointer;
+  left: 220px;
+  height: 25px;
+  width: 25px;
+} 
+
+
+
+
+
+/* 커스텀 시작 */
+/* 2차 이상의 메뉴를 숨기기 */
+.side-bar>ul ul {
+  display: none;
+}
+
+
+/* 사이드바 시작 */
+
+/* 사이드바의 너비와 높이를 변수를 통해 통제 */
+/* menu_bar 위치 설정 */
+#menu_bar_position {
+  position: absolute;
+  width: 10%;
+  height: 100%;
+  float: left;
+  padding: 1px;
+}
+/* 사이드바 크기 지정 */
+:root {
+  --side-bar-width: 270px;
+  --side-bar-height: 85vh;
+}
+
+.side-bar {
+  /* 스크롤을 따라오도록 지정 */
+  position: fixed;
+  background-color: #17B978;
+  /* 사이드바의 높이를 전체 화면 높이 지정 */
+  width: var(--side-bar-width);
+  min-height: var(--side-bar-height);
+  /* 사이드바 위와 아래의 마진을 동일하게 지정 */
+  margin-top: calc((100vh - var(--side-bar-height)) / 2);
+}
+
+/* 아이콘 시작 */
+.side-bar__icon-box {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.side-bar__icon-1 {
+  position: relative;
+  width: 23px;
+  height: 17px;
+  margin: 15px;
+  margin-top: 20px;
+  transition: .5s;
+}
+
+:root {
+  --side-bar__icon: .5s;
+}
+
+.side-bar__icon-1>div {
+  position: absolute;
+  width: 100%;
+  height: 20%;
+  background-color: #000000;
+  transition: all var(--side-bar__icon);
+}
+
+.side-bar__icon-1>div:nth-of-type(1) {
+  top: 0;
+  width: auto;
+  left: 0;
+  right: 0;
+  transition: all var(--side-bar__icon), left calc(var(--side-bar__icon) / 2) calc(var(--side-bar__icon) / 2), right calc(var(--side-bar__icon) / 2) calc(var(--side-bar__icon) / 2), height calc(var(--side-bar__icon) / 2) 0s;
+}
+
+.side-bar__icon-1>div:nth-of-type(2) {
+  top: 40%;
+  transform-origin: bottom left;
+}
+
+.side-bar__icon-1>div:nth-of-type(3) {
+  top: 80%;
+  left: auto;
+  right: 0;
+  transform-origin: bottom right;
+}
+
+
+.side-bar:hover .side-bar__icon-1 {
+  transform: translate(-198px, 0);
+}
+
+.side-bar:hover .side-bar__icon-1>div:nth-of-type(2) {
+  transform: rotate(45deg);
+  width: 70.5%;
+  height: 25%;
+}
+
+.side-bar:hover .side-bar__icon-1>div:nth-of-type(3) {
+  top: 40%;
+  transform: rotate(-45deg);
+  width: 70.5%;
+  height: 25%;
+}
+
+.side-bar:hover .side-bar__icon-1>div:nth-of-type(1) {
+  left: 41%;
+  right: 41%;
+  height: 100%;
+  transition: all var(--side-bar__icon), left calc(var(--side-bar__icon) / 2) 0s, right calc(var(--side-bar__icon) / 2) 0s, height calc(var(--side-bar__icon) / 2) calc(var(--side-bar__icon) / 2);
+}
+
+/* 아이콘 끝 */
+
+/* 모든 메뉴의 a에 속성값 부여 */
+.side-bar ul>li>a {
+  display: block;
+  color: #000000;
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 50px;
+  transition: .5s;
+}
+
+/* 자식의 position이 absolute일 때 자식을 영역 안에 가두어 준다 */
+.side-bar>ul>li {
+  position: relative;
+}
+
+/* 모든 메뉴가 마우스 인식 시 반응 */
+.side-bar ul>li:hover>a {
+  background-color: #086972;
+  border-bottom: 1px solid #000000;
+}
+
+/* 1차 메뉴의 항목이 마우스 인식 시에 2차 메뉴 등장 */
+.side-bar>ul>li:hover>ul {
+  display: block;
+  position: absolute;
+  background-color: #17B978;
+  top: 0;
+  /* 2차 메뉴의 상단을 1차 메뉴의 상단에 고정 */
+  left: 100%;
+  /* 2차 메뉴를 1차 메뉴의 너비만큼 이동 */
+  width: 100%;
+  /* 1차 메뉴의 너비를 상속 */
+}
+
+/* 사이드바 너비의 80%만큼 왼쪽으로 이동 */
+.side-bar {
+  border-radius: 20px;
+  transform: translate(calc(var(--side-bar-width) * -0.8), 0);
+  transition: .5s;
+}
+
+/* 마우스 인식 시 원래의 위치로 이동 */
+.side-bar:hover {
+  transform: translate(-20px, 0);
+  /* 둥근 모서리의 너비만큼 숨겨주기 */
+}
+
+/* 사이드바 끝 */
+
+/* 커스텀 끝 */
+
+
+#map {
+  position: absolute;
+  left: 0;
+  top: 222px;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+  width: 100%;
+}
+
+
+#landyview {
+
+  position: absolute;
+  top: 50px;
+  float: left;
+
+  width: 350px;
+  height: 400px;
+  padding: 5px;
+  border: 2px solid rgb(0, 0, 0);
+  border-radius: 10px;
+  background-color: #A7FF83;
+}

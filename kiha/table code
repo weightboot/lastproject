@@ -48,6 +48,56 @@ UPDATE high
 SET high = 500
 WHERE id = 1;
 
+         // slant 테이블 생성
+create table slant
+(id int, pnu varchar(20), slant varchar(10), sscore int);
+
+INSERT INTO slant (id, pnu, slant)
+SELECT id, pnu, slant
+FROM (
+    SELECT id, pnu, slant
+    FROM info
+    ORDER BY pnu
+) AS sorted_info;
+
+// sscore 값 생성
+UPDATE slant
+SET sscore = CASE
+    WHEN slant = '평지' or slant = '저지'  THEN 100
+    WHEN slant = '완경사' THEN 60
+    WHEN slant = '급경사' THEN 30
+    WHEN slant = '고지' then 0
+    END;
+
+// slant 테이블 트리거생성 (sscore의 값 자동업데이트를 위한)
+CREATE OR REPLACE FUNCTION calculate_sscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- NEW는 새로 삽입하거나 업데이트된 행을 나타냅니다.
+    NEW.sscore := CASE
+      WHEN slant = '평지' or slant = '저지'  THEN 100
+	  WHEN slant = '완경사' THEN 60
+	  WHEN slant = '급경사' THEN 30
+	  WHEN slant = '고지' then 0
+	  END;
+
+    -- 트리거 함수는 항상 NEW를 반환해야 합니다.
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- high 테이블에 트리거 생성
+CREATE TRIGGER calculate_sscore_trigger
+BEFORE INSERT OR UPDATE ON slant
+FOR EACH ROW
+EXECUTE FUNCTION calculate_sscore_function();
+
+
+
+
+
+
+
 
 //
 DROP TABLE IF EXISTS infoscore;

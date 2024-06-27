@@ -86,7 +86,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- high 테이블에 트리거 생성
+-- slant 테이블에 트리거 생성
 CREATE TRIGGER calculate_sscore_trigger
 BEFORE INSERT OR UPDATE ON slant
 FOR EACH ROW

@@ -167,8 +167,9 @@ function getFeatureStyle(feature) {
 // geoserver에서 WFS 방식으로 자료를 받아와 openLayers에서 소스로 사용하도록 한다.
 
 //김문식 교수님 소스코드를 사용하면 필지선택전에 cql필터가 적용되기 때문에 변경을 계속해주는 함수를 썼던 박소영 교수님 소스코드를 이용해야 한다. 김문식 교수님의 예제는 cql필터가 변경을 할 이유가 없기때문
-//그 문제가 아니라 김문식 교수님은 불러오는 방법이 다른걸 암 근데 그걸 적용 시켜 할려고 해도 초기 선언을 어떻게 해야할지 모르겠다;
+//그 문제가 아니라 김문식 교수님은 불러오는 방법이 다른걸 알았다. 근데 그걸 적용 시켜 할려고 해도 초기 선언을 어떻게 해야할지 모르겠다;
 
+//모든 옵션을 체크박스로 하기로 결정 했기 때문에 함수 전체 주석처리
 // function WFSsearchmaker(method) {
 //   wfsSource = new VectorSource
 //     (
@@ -203,7 +204,7 @@ wfsLayer = new VectorLayer
 (
   {
     source: wfsSource, 
-    style: function(feature) { return getFeatureStyle(feature);}
+    style: function(feature) { return getFeatureStyle(feature);}//스타일을 함수로 불러왔기 때문에 기존 스타일은 주석처리
     // style: new Style
     // (
     //    {
@@ -326,7 +327,7 @@ map.on('click', (e) =>
 //     // 이 point와 같이 넘어온 메타데이터 값을 찾는다.
     
     let id = feature.get('id');
-    //let sql_id = feature.get('sql_id');
+    //let sql_id = feature.get('sql_id'); 실제로 작동을 안할것
     let pnu = feature.get('pnu');
     let address = feature.get('address');
     let jibun = feature.get('jibun');
@@ -355,7 +356,7 @@ map.on('click', (e) =>
     document.getElementById("cvs_tel").innerHTML = price;
     //document.getElementById("sql_id").innerHTML = id;
     let name_field = document.getElementById("sql_id");
-    name_field.value=id;//강제로 값을 변경
+    name_field.value=id;//강제로 html id값을 변경
     //alert(id);
 //오타를 확인하는 습관을 들이자 오타 하나때매 멀쩡히 되는 기능 안되게 개쌩쇼를함
 //---------------------------------------------------
@@ -374,38 +375,8 @@ map.on('click', (e) =>
   
 }
 );
-
-
-// map.on('click', (e) =>
-//   {
-//     console.log(e);
-  
-//     overlayLayer.setPosition(undefined);
-
-//     map.forEachFeatureAtPixel(e.pixel, (feature, layer) =>
-//     {
-//   //     // 이 point와 같이 넘어온 메타데이터 값을 찾는다.
-//       //팝업창말고 윈도우 창에서 나타내기 위한
-//       let pnu_window = feature.get('pnu');
-//       let address_window = feature.get('address');
-//       let jibun_window = feature.get('jibun');
-//       let area_window = feature.get('area');
-//       let youngdo_window = feature.get('youngdo');
-//       let price_window = feature.get('price');
-
-//     document.getElementById("pnu_window").innerHTML = pnu_window;
-//     document.getElementById("address_window").innerHTML = address_window;
-//     document.getElementById("jibun_window").innerHTML = jibun_window;
-//     document.getElementById("area_window").innerHTML = area_window;
-//     document.getElementById("youngdo_window").innerHTML = youngdo_window;
-//     document.getElementById("price_window").innerHTML = price_window;
-          
-//     })
     
-//   }
-//   );
-    
-const selectedStyle = new Style({//마우스 드래그로 선택하면 나타나는 안색상과 겉에선
+const selectedStyle = new Style({//마우스 드래그로 선택하면 나타나는 안색상과 겉에선 스타일 정의 근데 왜 이렇게 귀찮게 하는지 모르겠다 걍 파라메터 써넣을것이지 왜 궂이 정의하고
   fill: new Fill({
     color: 'rgba(255, 255, 255, 0.6)',
   }),
@@ -498,11 +469,13 @@ const infoBox = document.getElementById('info');
 
 selectedFeatures.on(['add', 'remove'], function () {
   const names = selectedFeatures.getArray().map((feature) => {
-    return feature.get('address');
+    return feature.get('address');//id값을 리턴후 jsp로 넘김
   });
-  if (names.length > 0) {
-    infoBox.innerHTML = names.join(', ');
-  } else {
+  if (names.length > 1) {
+    infoBox.innerHTML = names.length;//드래그박스로 선택한 객체의 갯수 표현
+  } else if(names.length == 1){
+    infoBox.innerHTML = names;
+  } else{
     infoBox.innerHTML = 'None';
   }
 });

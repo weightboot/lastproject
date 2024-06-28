@@ -145,6 +145,55 @@ EXECUTE FUNCTION calculate_CVscore_function();
 
 
 
+  // develop 테이블 생성
+drop table develop
+
+CREATE TABLE develop (
+    id INT,
+    pnu VARCHAR(20),
+    Ddist DOUBLE PRECISION,
+    Dscore INT
+);
+
+INSERT INTO develop (id, pnu, Ddist)
+SELECT id, pnu, ROUND(CAST(hubdist / 1000.0 AS numeric), 3)
+FROM info;
+
+
+
+
+// CVscore 값 생성
+UPDATE develop
+SET Dscore = CASE
+    WHEN Ddist <= 1  THEN 100
+    WHEN Ddist > 1 and Ddist <= 1.5 THEN 75
+    WHEN Ddist > 1.5 and Ddist <= 2 THEN 50
+	WHEN Ddist > 2 and Ddist <= 3 THEN 25
+    WHEN Ddist > 3 then 0
+    END;
+
+// CVscore 값 자동업데이트 트리거 생성
+CREATE OR REPLACE FUNCTION calculate_Dscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- NEW는 새로 삽입되거나 업데이트된 행을 나타냅니다.
+    NEW.Dscore := CASE
+        WHEN NEW.Ddist <= 1  THEN 100
+        WHEN NEW.Ddist > 1 and NEW.Ddist <= 1.5 THEN 75
+        WHEN NEW.Ddist > 1.5 and NEW.Ddist <= 2 THEN 50
+	 	WHEN NEW.Ddist > 2 and NEW.Ddist <= 3 THEN 25
+        WHEN NEW.Ddist > 3 THEN 0
+    END;
+
+    -- 트리거 함수는 항상 NEW를 반환해야 합니다.
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_Dscore_trigger
+BEFORE INSERT OR UPDATE ON develop
+FOR EACH ROW
+EXECUTE FUNCTION calculate_Dscore_function();
 
 
 

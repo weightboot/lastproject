@@ -17,12 +17,11 @@ li {
   list-style: none;
 }
 
-/* 사이트의 높이를 5000px로 만들어 스크롤 생성 */
+/* 사이트의 높이를 1000px로 만들어 스크롤 생성 */
 body {
   height: 1000px;
-  background-color: white;
+  background-color: #FFFFFF; /* 흰색 배경 */
 }
-
 
 a {
   color: inherit;
@@ -31,12 +30,10 @@ a {
 
 /* 노멀라이즈 끝 */
 
-
 #header {
   height: 200px;
-  border-bottom: 3px solid #000000;
+  border-bottom: 3px solid #000000; /* 검정색 */
 }
-
 
 /* 라이브러리 시작 */
 /*사이트의 모든 요소에 사용될 수 있는 값은 별도로 라이브러리로 정리할 수 있다.*/
@@ -83,7 +80,7 @@ a {
 /* <li>의 display 값은 기본적으로 block의 형태이므로 inline-block 값으로 바꿔준다 */
 .menu-bar__menu-box-1>ul>li {
   display: inline-block;
-  color: #000000;
+  color: #000000; /* 검정색 */
 }
 
 /* inline-block 형태는 text-align을 통해 정렬이 가능하다 */
@@ -98,12 +95,9 @@ a {
 
 .logo-bar>div>.logo-bar__logo {
   font-size: 5rem;
-  text-decoration: underline;
-  color:  #000000;
+  color: #000000; /* 검정색 */
   cursor: default;
 }
-
-
 
 .menu-bar__menu-box-1>ul>li>a {
   display: block;
@@ -111,47 +105,41 @@ a {
   padding: 10px 30px;
 }
 
-
 .menu-bar__menu-box-1>ul>li:hover>a {
-  color: #17B978;
+  color: #888888; /* 회색 */
   text-decoration: underline;
 }
+
 .logo-bar>div>.logo-bar__logo>span>span:nth-of-type(1) {
-  color: #17B978;
+  color: #000000; /* 검정색 */
 }
 
 .logo-bar>div>.logo-bar__logo>span>span:nth-of-type(2) {
-  color: #000000;
+  color: #000000; /* 검정색 */
 }
 
 .logo-bar>div>.logo-bar__logo>span>span:nth-of-type(3) {
-  color: #000000;
+  color: #000000; /* 검정색 */
 }
-
 
 /* 메뉴바 끝 */
 
 /* 커스텀 끝 */
 
 /* 기본 체크박스 설정 */
-  input[type="checkbox"] {
+input[type="checkbox"] {
   position: absolute;
   cursor: pointer;
   left: 220px;
   height: 25px;
   width: 25px;
-} 
-
-
-
-
+}
 
 /* 커스텀 시작 */
 /* 2차 이상의 메뉴를 숨기기 */
 .side-bar>ul ul {
   display: none;
 }
-
 
 /* 사이드바 시작 */
 
@@ -173,7 +161,7 @@ a {
 .side-bar {
   /* 스크롤을 따라오도록 지정 */
   position: fixed;
-  background-color: #17B978;
+  background-color: #333333; /* 어두운 회색 */
   /* 사이드바의 높이를 전체 화면 높이 지정 */
   width: var(--side-bar-width);
   min-height: var(--side-bar-height);
@@ -204,7 +192,7 @@ a {
   position: absolute;
   width: 100%;
   height: 20%;
-  background-color: #000000;
+  background-color: #FFFFFF;
   transition: all var(--side-bar__icon);
 }
 
@@ -227,7 +215,6 @@ a {
   right: 0;
   transform-origin: bottom right;
 }
-
 
 .side-bar:hover .side-bar__icon-1 {
   transform: translate(-198px, 0);
@@ -258,7 +245,7 @@ a {
 /* 모든 메뉴의 a에 속성값 부여 */
 .side-bar ul>li>a {
   display: block;
-  color: #000000;
+  color: #FFFFFF; /* 흰색 */
   font-size: 1.4rem;
   font-weight: bold;
   padding-top: 20px;
@@ -274,7 +261,7 @@ a {
 
 /* 모든 메뉴가 마우스 인식 시 반응 */
 .side-bar ul>li:hover>a {
-  background-color: #086972;
+  background-color: #666666; /* 중간 회색 */
   border-bottom: 1px solid #000000;
 }
 
@@ -282,7 +269,7 @@ a {
 .side-bar>ul>li:hover>ul {
   display: block;
   position: absolute;
-  background-color: #17B978;
+  background-color: #333333; /* 어두운 회색 */
   top: 0;
   /* 2차 메뉴의 상단을 1차 메뉴의 상단에 고정 */
   left: 100%;
@@ -290,8 +277,6 @@ a {
   width: 100%;
   /* 1차 메뉴의 너비를 상속 */
 }
-
-
 
 /* 사이드바 너비의 80%만큼 왼쪽으로 이동 */
 .side-bar {
@@ -310,7 +295,6 @@ a {
 
 /* 커스텀 끝 */
 
-
 #map {
   position: absolute;
   left: 0;
@@ -320,7 +304,8 @@ a {
   height: 100%;
   width: 100%;
 }
-.landview_position{
+
+.landview_position {
   top: 600px;
   left: 1750px;
 }
@@ -331,8 +316,7 @@ a {
   width: 350px;
   height: 400px;
   padding: 5px;
-  border: 2px solid rgb(0, 0, 0);
+  border: 2px solid #000000; /* 검정색 */
   border-radius: 10px;
-  background-color: #A7FF83;
+  background-color: #F0F0F0; /* 밝은 회색 */
 }
-

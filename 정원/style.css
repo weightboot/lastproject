@@ -1,11 +1,11 @@
 @import "node_modules/ol/ol.css";
 /* 폰트 적용 시작 */
-@import url('https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap');
-
-html {
-  font-family: 'Indie Flower', cursive;
+@font-face {
+  font-family: 'TmonMonsori';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/TmonMonsori.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
 }
-
 /* 폰트적용 끝 */
 
 /* 노멀라이즈 시작 */
@@ -69,7 +69,6 @@ a {
 .con-min-width {
   min-width: 1200px;
   padding: 0 10px;
-
 }
 
 /* 라이브러리 끝 */
@@ -104,11 +103,14 @@ a {
   cursor: default;
 }
 
+
+
 .menu-bar__menu-box-1>ul>li>a {
   display: block;
   font-size: 2rem;
   padding: 10px 30px;
 }
+
 
 .menu-bar__menu-box-1>ul>li:hover>a {
   color: #17B978;
@@ -289,6 +291,8 @@ a {
   /* 1차 메뉴의 너비를 상속 */
 }
 
+
+
 /* 사이드바 너비의 80%만큼 왼쪽으로 이동 */
 .side-bar {
   border-radius: 20px;
@@ -316,14 +320,14 @@ a {
   height: 100%;
   width: 100%;
 }
+.landview_position{
+  top: 600px;
+  left: 1750px;
+}
 
-
-#landyview {
-
+.landyview {
   position: absolute;
-  top: 50px;
   float: left;
-
   width: 350px;
   height: 400px;
   padding: 5px;
@@ -331,3 +335,4 @@ a {
   border-radius: 10px;
   background-color: #A7FF83;
 }
+

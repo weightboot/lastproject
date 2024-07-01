@@ -296,6 +296,55 @@ EXECUTE FUNCTION calculate_pscore_function();
 
 
 
+ // Road 테이블 생성 코드
+
+drop table road
+
+CREATE TABLE road (
+    id INT,
+    pnu VARCHAR(20),
+    Rdist DOUBLE PRECISION,
+    Rscore INT
+);
+
+INSERT INTO road (id, pnu)
+SELECT id, pnu
+FROM info order by pnu;
+
+
+// Rscore 값 생성
+UPDATE road
+SET Rscore = CASE
+    WHEN Rdist <= 1  THEN 100
+    WHEN Rdist > 1 and Rdist <= 2 THEN 75
+    WHEN Rdist > 2 and Rdist <= 3 THEN 50
+	WHEN Rdist > 3 and Rdist <= 4 THEN 25
+    WHEN Rdist > 4 then 0
+    END;
+
+// 트리거 생성
+CREATE OR REPLACE FUNCTION calculate_Rscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- NEW는 새로 삽입되거나 업데이트된 행을 나타냅니다.
+    NEW.Rscore := CASE
+        WHEN NEW.Rdist <= 1  THEN 100
+        WHEN NEW.Rdist > 1 and NEW.Rdist <= 2 THEN 75
+        WHEN NEW.Rdist > 2 and NEW.Rdist <= 3 THEN 50
+	 	WHEN NEW.Rdist > 3 and NEW.Rdist <= 4 THEN 25
+        WHEN NEW.Rdist > 4 THEN 0
+    END;
+
+    -- 트리거 함수는 항상 NEW를 반환해야 합니다.
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_Rscore_trigger
+BEFORE INSERT OR UPDATE ON Road
+FOR EACH ROW
+EXECUTE FUNCTION calculate_Rscore_function();
+
 
 
 

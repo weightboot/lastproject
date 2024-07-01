@@ -16,6 +16,8 @@ import { Circle } from 'ol/style';
 import { Stroke } from 'ol/style';
 import { Fill } from 'ol/style';
 
+//타 배경지도를 가져오기 위해
+import XYZ from 'ol/source/XYZ';
 
 // view와의 상호작용을 위해 
 import { Select,DragBox,defaults } from 'ol/interaction';//드래그박스 추가
@@ -234,6 +236,13 @@ const osmLayer = new TileLayer
   }
 );
 
+const vworldSatelliteLayer = new TileLayer({
+  source: new XYZ({
+    url: 'http://api.vworld.kr/req/wmts/1.0.0/DA3C8CB7-EA7C-3484-8234-929E0068361E/Satellite/{z}/{y}/{x}.jpeg', // VWorld Satellite 타일 URL
+  }),
+  visible: false, // 초기에는 보이지 않도록 설정
+});
+
 WFSfiltermaker("");//wfs함수초기화 선언하여 이 함수 선언에 따라 기본값이 전부 올라온다-
 // 마우스가 WFS 필지 위로 올라갈 때(hover) 처리
 const mouseHoverSelect = new Select
@@ -304,7 +313,7 @@ const overlayLayer  = new Overlay
 
 const map = new Map({
   target: 'map',
-  layers: [osmLayer, wfsLayer],
+  layers: [osmLayer, vworldSatelliteLayer,wfsLayer],
   view: new View({
     center: [14367375.61632484, 4509887.790027254],
     zoom: 12
@@ -336,12 +345,12 @@ map.on('click', (e) =>
     let price = feature.get('price');
 
     //---------------------------------------------------
-    let pnu_window = feature.get('pnu');
-    let address_window = feature.get('address');
-    let jibun_window = feature.get('jibun');
-    let area_window = feature.get('area');
-    let youngdo_window = feature.get('youngdo');
-    let price_window = feature.get('price');
+    // let pnu_window = feature.get('pnu');
+    // let address_window = feature.get('address');
+    // let jibun_window = feature.get('jibun');
+    // let area_window = feature.get('area');
+    // let youngdo_window = feature.get('youngdo');
+    // let price_window = feature.get('price');
     //---------------------------------------------------
 
 //     // 오버레이를 위한 div에 값들을 적는다.
@@ -360,12 +369,12 @@ map.on('click', (e) =>
     //alert(id);
 //오타를 확인하는 습관을 들이자 오타 하나때매 멀쩡히 되는 기능 안되게 개쌩쇼를함
 //---------------------------------------------------
-    document.getElementById("pnu_window").innerHTML = pnu_window;
-    document.getElementById("address_window").innerHTML = address_window;
-    document.getElementById("jibun_window").innerHTML = jibun_window;
-    document.getElementById("area_window").innerHTML = area_window;
-    document.getElementById("youngdo_window").innerHTML = youngdo_window;
-    document.getElementById("price_window").innerHTML = price_window;
+    // document.getElementById("pnu_window").innerHTML = pnu_window;
+    // document.getElementById("address_window").innerHTML = address_window;
+    // document.getElementById("jibun_window").innerHTML = jibun_window;
+    // document.getElementById("area_window").innerHTML = area_window;
+    // document.getElementById("youngdo_window").innerHTML = youngdo_window;
+    // document.getElementById("price_window").innerHTML = price_window;
 //---------------------------------------------------
 
     // 오버레이 창을 띄운다.
@@ -378,10 +387,10 @@ map.on('click', (e) =>
     
 const selectedStyle = new Style({//마우스 드래그로 선택하면 나타나는 안색상과 겉에선 스타일 정의 근데 왜 이렇게 귀찮게 하는지 모르겠다 걍 파라메터 써넣을것이지 왜 궂이 정의하고
   fill: new Fill({
-    color: 'rgba(255, 255, 255, 0.6)',
+    color: 'rgba(255, 0, 0, 1)',
   }),
   stroke: new Stroke({
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: 'rgba(255, 0, 0, 1)',
     width: 2,
   }),
 });
@@ -469,7 +478,7 @@ const infoBox = document.getElementById('info');
 
 selectedFeatures.on(['add', 'remove'], function () {
   const names = selectedFeatures.getArray().map((feature) => {
-    return feature.get('address');//id값을 리턴후 jsp로 넘김
+    return feature.get('address');//id값을 리턴후 jsp로 넘김을 해야하는데 이걸 보면 다른 피쳐값도 넘길수 있을거 같다 근데 방법을 찾아야됨
   });
   if (names.length > 1) {
     infoBox.innerHTML = names.length;//드래그박스로 선택한 객체의 갯수 표현
@@ -529,3 +538,12 @@ document.getElementById('slant04').onchange = () => {
   console.log('exclude04 clicked');
   WFSfiltermaker();
 }
+document.getElementById('OSM').onclick = () => {
+  osmLayer.setVisible(true);
+  vworldSatelliteLayer.setVisible(false);
+  };
+
+document.getElementById('VWorldSatellite').onclick = () => {
+  vworldSatelliteLayer.setVisible(true);
+  osmLayer.setVisible(false);
+    };

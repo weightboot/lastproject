@@ -8,82 +8,119 @@
   </head>
   <body>
     <!-- 지도 영역 -->
-    <div class="container">
+     <!-- 2024.06.27 -->
 
-      <br>
-      <!-- 컨텐츠 부분을 메뉴 1, 메뉴 2, 지도로 3 부분으로 나눌 예정 -->
-      <!-- 영역을 어떻게 보여줄지에 맞추어서 순서로 정렬 -->
-      <div id="contents">
-        <div id="menu1">
-          <div class="contents2">
-            <h3> 개발적성</h3>
-            <ul class="campsiteList">
-              <!-- &middot;은 글자 중간에 가운데 점을 찍는 html 특수문자  -->
-              <li> <span id="sido01">경사도</span></li>
-              <li> <span id="sido02">표고</span></li>
-              <li> <span id="sido03">기개발지와의 거리</span></li>
-              <li> <span id="sido04">공공편익시설과의 거리</span></li>
-            </ul>
-          </div>
-          <br>
-          <div class="contents3">
-            <h3> 보건적성</h3>
-            <ul class="campsiteList">
-              <li> <span id="induty01">경지정리면적비율</span></li>
-              <li> <span id="induty02">생태,자연도 상위등급비율</span></li>
-              <li> <span id="induty03">공적규제지역면적비율</span></li>
-              <li> <span id="induty04">공적규제지역과의 거리</span></li>
-            </ul>
-          </div>
-          <br>
-          <div class="contents4">
-            <h3> 선택지표</h3>
-            <ul class="campsiteList">
-              <li> <span id="theme01">도시용지비율</span></li>
-              <li> <span id="theme02">용도전용비율</span></li>
-              <li> <span id="theme03">도시용지 인접비율</span></li>
-              <li> <span id="theme04">지가수준</span></li>
-              <li> <span id="theme05">도로와의 거리</span></li>
-              <li> <span id="theme06">전,답,과수원면적비율</span></li>
-              <li> <span id="theme07">농업진흥지역비율</span></li>
-              <li> <span id="theme08">임상도 상위등급비율</span></li>
-              <li> <span id="theme09">보전산지비율</span></li>
-              <li> <span id="theme10">경지정리지역과의 거리</span></li>
-              <li> <span id="theme11">하천,호소,농업용 저수지와의 거리</span></li>
-              <li> <span id="theme12">바닷가와의 거리</span></li>
-            </ul>
-          </div>
-  
-  
-        </div> <!-- menu1 닫힘 -->
-        <div id="menu2">
-          <div class="contents1">
-            <h3> 용도지역</h3>
-           
-            <table class="campsiteTable">
-              <tr>
-                <h3> 주상공 제외 </h3>
-                <td>
-                  <!-- &nbsp는 한 칸 띄우는 html 태그 -->
-                  <input type="checkbox" id="exclude01">&nbsp; 주거지역<br>
-                  <input type="checkbox" id="exclude02">&nbsp; 상업지역<br>
-                  <input type="checkbox" id="exclude03">&nbsp; 공업지역<br>
-                  <input type="checkbox" id="exclude04">&nbsp; 한번에<br>
-                </td>
-              </tr>
-              <tr>
-                <h3> 경사도 </h3>
-                <td>
-                  <!-- &nbsp는 한 칸 띄우는 html 태그 -->
-                  <input type="checkbox" id="slant01">&nbsp; 평지,저지<br>
-                  <input type="checkbox" id="slant02">&nbsp; 완경사<br>
-                  <input type="checkbox" id="slant03">&nbsp; 급경사<br>
-                  <input type="checkbox" id="slant04">&nbsp; 고지<br>
-                </td>
-              </tr>
-            </table>
-          </div>
-          <div class="contents2">
+<!-- 현재 href 주소는 모두 #(지정하지 않음) -->
+  <!-- header를 사용하여 윗단을 정의 -->
+  <div id="header">
+    <!-- 제목을 적어줄 영역을 설정 -->
+    <h1 class="logo-bar con-min-width">
+      <div class="text-align-center con">
+        <a href="#" class="logo-bar__logo">
+          <span class="ico-1"><i class="fa-solid fa-plane"></i></span>
+          <!-- <img src="./logo.png" alt="My Image" width="350"> -->
+          <span>
+            <span>토지</span><span>적성</span><span>평가</span>
+          </span>
+        </a>
+      </div>
+    </h1>
+    <!-- 기능ㄹ을 넣어줄 영역을 설정 -->
+    <h2 class="menu-bar con-min-width">
+      <div class="con">
+        <nav class="menu-bar__menu-box-1 text-align-center">
+          <ul class="inline-grid">
+            <li><a href="#" class="block">Home</a></li>
+            <li><a href="#" class="block">Read</a></li>
+            <li><a href="#" class="block">Write</a></li>
+            <li><a href="#" class="block">About</a></li>
+            <li><a href="#" class="block">SNS</a></li>
+            <li><a href="#" class="block">Study</a></li>
+            <li><a href="#" class="block">Exit</a></li>
+          </ul>
+        </nav>
+      </div>
+    </h2>
+  </div>
+
+
+  <!-- 사이드 바 기능 구현 -->
+  <div id="menu_bar_position" style="position: relative; z-index: 1;">
+    <aside class="side-bar" >
+      <!-- 사이드바 아이콘 만드는 영역. 기능적인 부분은 css에서 정의 -->
+      <section class="side-bar__icon-box">
+        <section class="side-bar__icon-1">
+          <div></div>
+          <div></div>
+          <div></div>
+        </section>
+      </section>
+      <!-- 메뉴에 넣을 내용을 정의. 기능적인 부분은 main.js에서 정의 -->
+      <ul>
+        <li>
+          <a id="menu1" href="#"><i class="fa-solid fa-cat">제외지</i></a>
+          <ul>
+            <li><a id="sido01" href="#">주거,상업,공업지역</a></li>
+            <li><a id="sido02" href="#">보전대상 지역</a></li>
+          </ul>
+        </li>
+        <li>
+          <a id="menu2" href="#">menu2</a>
+          <ul>
+            <li><a id="induty01" href="#">경지정리면적비율</a></li>
+            <li><a id="induty02" href="#">생태,자연도 상위등급비율</a></li>
+            <li><a id="induty03" href="#">공적규제지역면적비율</a></li>
+            <li><a id="induty04" href="#">공적규제지역과의 거리</a></li>
+          </ul>
+        </li>
+        <li>
+          <a id="menu3" href="#">menu3</a>
+          <ul>
+            <li><a id="theme01" href="#">도시용지비율</a></li>
+            <li><a id="theme02" href="#">용도전용비율</a></li>
+            <li><a id="theme03" href="#">도시용지 인접비율</a></li>
+            <li><a id="theme04" href="#">지가수준</a></li>
+            <li><a id="theme05" href="#">도로와의 거리</a></li>
+            <li><a id="theme06" href="#">전,답,과수원면적비율</a></li>
+            <li><a id="theme07" href="#">농업진흥지역비율</a></li>
+            <li><a id="theme08" href="#">임상도 상위등급비율</a></li>            
+            <li><a id="theme09" href="#">보전산지비율</a></li>
+            <li><a id="theme10" href="#">경지정리지역과의 거리</a></li>
+            <li><a id="theme11" href="#">하천,호소,농업용 저수지와의 거리</a></li>
+            <li><a id="theme12" href="#">바닷가와의 거리</a></li>   
+          </ul>
+        </li>
+        <li>
+          <a id="menu4" href="#">제외지</a>
+          <ul>
+            <li><input type="checkbox" id="exclude01"><a href="#"><label for="exclude01">주거지역</label></a><em></em></li>
+            <li><input type="checkbox" id="exclude02"><a href="#"><label for="exclude02"><em></em>상업지역</label></a></li>
+            <li><input type="checkbox" id="exclude03"><a href="#"><label for="exclude03"><em></em>공업지역</label></a></li>
+            <li><input type="checkbox" id="exclude04"><a href="#"><label for="exclude04"><em></em>한번에</label></a></li>
+          </ul>
+        </li>
+        <li>
+          <a id="menu5">경사도</a>
+          <ul>
+            <li><input type="checkbox" id="slant01"><a href="#"><label for="slant01">평지,저지</label></a><em></em></li>
+            <li><input type="checkbox" id="slant02"><a href="#"><label for="slant02">완경사</label></a><em></em></li>
+            <li><input type="checkbox" id="slant03"><a href="#"><label for="slant03">급경사</label></a><em></em></li>
+            <li><input type="checkbox" id="slant04"><a href="#"><label for="slant04">고지</label></a><em></em></li>
+          </ul>
+        </li>
+        <li>
+          <a id="menu4">용도지역</a>
+        </li>
+        <li>
+          <a id="menu4">건축물 여부</a>
+        </li>
+        <li>
+          <a id="menu4">좌표계</a>
+        </li>
+      </ul>
+    </aside>
+  </div>
+   <!-- <div class="contents2">
             <h3> 선택한 토지 정보</h3>
             <ul class="statues_window">
               <li>PNU 번호 : <span id="pnu_window"></span></li>
@@ -92,11 +129,66 @@
               <li>면적 :<span id="area_window"></span></li>
               <li>용도지역 :<span id="youngdo_window"></span></li>
               <li>공시지가 :<span id="price_window"></span></li>
-              <!-- <li>지표별 평가점수 :<span id="land_score"></span></li>
+              <li>지표별 평가점수 :<span id="land_score"></span></li>
               <li>특성별 적성값 :<span id="char_score"></span></li>
-              <li>종합 적성값 :<span id="total_score"></span></li> -->
+              <li>종합 적성값 :<span id="total_score"></span></li>
             </ul>
-          </div>
+          </div> -->
+
+
+
+  <!-- 지도 영역  -->
+  <div id="map"></div>
+  <!-- 드래그를 통해서 선택된 영역에 대해서 나타내느 부분 -->
+  <div id="map2" style="position: relative; z-index: 1;">Selected regions: <span id="info">None</span></div>
+  <!-- popup 영역 -->
+  <div class="landyview landview_position">
+    <a href="" id="jspurl"><h3 id="cvs_id"></h3></a>      
+    <ul>
+      <li>PNU: <span id="pnu"></span></li>
+      <li>지번: <span id="cvs_name"></span></li>
+      <li>면적: <span id="cvs_addr_doro"></span>㎡</li>
+      <li>용도지역: <span id="cvs_addr_jibun"></span></li>
+      <li>공시지가: <span id="cvs_tel"></span>원</li>
+    </ul>
+    <form action="./insert.jsp?sql_id=" method="get" id="">
+      지표별 평가점수 입력<input type="text" id="land_score_submit" name="land_score_submit"><br>
+      특성별 적성값 입력<input type="text" id="char_score_submit" name="char_score_submit"><br>
+      종합적성값 입력<input type="text" id="total_score_submit" name="total_score_submit"><br>
+      <input type="hidden" id="sql_id" name="sql_id">
+      <input type="submit" value="저장"><br>
+      <!-- <button id ='score_submit' type='button'>입력</button> -->
+      <!-- <button id ='score_delete' type='button'>삭제</button> -->
+    </form>
+  </div>
+
+  <div class="button-container" style="position: relative; z-index: 1;">
+    <button class="layer-button" id="OSM">일반지도</button>
+    <button class="layer-button" id="VWorldSatellite">위성지도</button>
+  </div>
+
+
+  <script type="module" src="./main.js"></script>
+
+</body>
+
+</html>
+
+   <!-- 임시로 남겨놓을것 -->
+          <!-- <div class="contents2">
+            <h3> 선택한 토지 정보</h3>
+            <ul class="statues_window">
+              <li>PNU 번호 : <span id="pnu_window"></span></li>
+              <li>주소 :<span id="address_window"></span></li>
+              <li>지번 :<span id="jibun_window"></span></li>
+              <li>면적 :<span id="area_window"></span></li>
+              <li>용도지역 :<span id="youngdo_window"></span></li>
+              <li>공시지가 :<span id="price_window"></span></li>
+              <li>지표별 평가점수 :<span id="land_score"></span></li>
+              <li>특성별 적성값 :<span id="char_score"></span></li>
+              <li>종합 적성값 :<span id="total_score"></span></li>
+            </ul>
+          </div> -->
           <!-- <div class="contents3">
             <tr>
               <th> 점수 입력창 </th>
@@ -113,37 +205,5 @@
               </td>
             </tr>
           </div> -->
+          <!-- 임시로 남겨놓을것 -->
           
-        </div> <!-- menu2 닫힘 -->
-        
-        <div id="mapArea">
-          <div id="map"></div>
-          <div id="map2">Selected regions: <span id="info">None</span></div>
-        <!-- </div> -->
-        </div> <!-- mapArea 닫힘 -->
-      </div> <!-- contents 닫힘 -->
-    </div> <!-- container 닫힘 -->
-    <!-- popup 영역 -->
-    <div id="landyview">
-      <a href="" id="jspurl"><h3 id="cvs_id"></h3></a>      
-      <ul>
-        <li>PNU: <span id="pnu"></span></li>
-        <li>지번: <span id="cvs_name"></span></li>
-        <li>면적: <span id="cvs_addr_doro"></span>㎡</li>
-        <li>용도지역: <span id="cvs_addr_jibun"></span></li>
-        <li>공시지가: <span id="cvs_tel"></span>원</li>
-      </ul>
-      <form action="./insert.jsp?" method="get" id="">
-        지표별 평가점수 입력<input type="text" id="land_score_submit" name="land_score_submit"><br>
-        특성별 적성값 입력<input type="text" id="char_score_submit" name="char_score_submit"><br>
-        종합적성값 입력<input type="text" id="total_score_submit" name="total_score_submit"><br>
-        <input type="hidden" id="sql_id" name="sql_id">
-        <input type="submit" value="저장"><br>
-        <!-- <button id ='score_submit' type='button'>입력</button> -->
-        <!-- <button id ='score_delete' type='button'>삭제</button> -->
-      </form>
-    </div>
-
-    <script type="module" src="./main.js"></script>
-  </body>
-</html>

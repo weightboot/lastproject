@@ -433,6 +433,45 @@ EXECUTE FUNCTION calculate_Escore_function();
 
 
 
+  	//RGarea 테이블 생성
+drop table RGarea
+
+CREATE TABLE RGarea (
+    id INT,
+    pnu VARCHAR(20),
+    RGArate DOUBLE PRECISION,
+    RGAscore INT
+);
+
+insert into RGarea (id, pnu) 
+	select id, pnu from info
+	order by pnu;
+
+
+CREATE OR REPLACE FUNCTION calculate_RGAscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    NEW.RGAscore := CASE
+        WHEN NEW.RGArate >= 0.8  THEN 100
+        WHEN NEW.RGArate >= 0.6 and NEW.RGArate < 0.8 THEN 90
+        WHEN NEW.RGArate >= 0.4 and NEW.RGArate < 0.6 THEN 70
+		WHEN NEW.RGArate >= 0.2 and NEW.RGArate < 0.4 THEN 50
+        WHEN NEW.RGArate < 0.2 then 30
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_RGAscore_trigger
+BEFORE INSERT OR UPDATE ON RGarea
+FOR EACH ROW
+EXECUTE FUNCTION calculate_RGAscore_function();
+
+
+
+
 
 
 

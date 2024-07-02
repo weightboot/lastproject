@@ -526,6 +526,63 @@ EXECUTE FUNCTION calculate_RGDscore_function();
 
 
 
+		// farm 테이블 생성
+drop table farm
+
+CREATE TABLE farm (
+    id INT,
+    pnu VARCHAR(20),
+    FMdist double precision,
+    FMscore INT
+);
+
+insert into farm (id, pnu) 
+	select id, pnu from info
+	order by pnu;
+
+
+CREATE OR REPLACE FUNCTION calculate_FMscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    NEW.FMscore := CASE
+        WHEN NEW.FMdist <= 1  THEN 100
+        WHEN NEW.FMdist > 1 and NEW.FMdist <= 2 THEN 75
+        WHEN NEW.FMdist > 2 and NEW.FMdist <= 3 THEN 50
+	 	WHEN NEW.FMdist > 3 and NEW.FMdist <= 4 THEN 25
+        WHEN NEW.FMdist > 4 THEN 0
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_FMscore_trigger
+BEFORE INSERT OR UPDATE ON Farm
+FOR EACH ROW
+EXECUTE FUNCTION calculate_FMscore_function();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //
 DROP TABLE IF EXISTS infoscore;

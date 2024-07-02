@@ -729,3 +729,115 @@ AFTER INSERT OR UPDATE ON Sea
 FOR EACH ROW
 EXECUTE FUNCTION update_conservation_suitability();
 
+
+
+
+
+
+
+
+
+
+///////////////////////grade 테이블 생성
+-- grade 테이블 생성
+DROP TABLE IF EXISTS grade CASCADE;
+CREATE TABLE grade (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    dv_sumscore INT,
+    cs_sumscore INT,
+    T_score INT,
+    normalized_score DOUBLE PRECISION,
+    grade VARCHAR(2)
+);
+
+-- 데이터 초기 삽입
+INSERT INTO grade (id, pnu, dv_sumscore, cs_sumscore, T_score)
+SELECT 
+    dv.id,
+    dv.pnu,
+    dv.SumScore AS dv_sumscore,
+    cs.CS_sumscore AS cs_sumscore,
+    dv.SumScore - cs.CS_sumscore AS T_score
+FROM 
+    Development_Suitability dv
+JOIN 
+    Conservation_Suitability cs ON dv.pnu = cs.pnu
+ORDER BY 
+    dv.pnu;
+
+-- 최소값과 최대값 계산
+DO $$ 
+DECLARE
+    min_T_score INT;
+    max_T_score INT;
+BEGIN
+    SELECT MIN(T_score), MAX(T_score) INTO min_T_score, max_T_score FROM grade;
+
+    -- normalized_score 및 grade 업데이트
+    UPDATE grade
+    SET normalized_score = ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3),
+        grade = CASE
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.2 THEN '가'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.4 THEN '나'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.6 THEN '다'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.8 THEN '라'
+            ELSE '마'
+        END;
+END $$;
+
+
+
+
+
+
+
+CREATE OR REPLACE FUNCTION update_grade()
+RETURNS TRIGGER AS $$
+DECLARE
+    min_T_score INT;
+    max_T_score INT;
+BEGIN
+    -- grade 테이블 업데이트
+    UPDATE grade
+    SET 
+        dv_sumscore = (SELECT SumScore FROM Development_Suitability WHERE pnu = NEW.pnu),
+        cs_sumscore = (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu),
+        T_score = (SELECT SumScore FROM Development_Suitability WHERE pnu = NEW.pnu) - (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu)
+    WHERE pnu = NEW.pnu;
+
+    -- 최소값과 최대값 계산
+    SELECT MIN(T_score), MAX(T_score) INTO min_T_score, max_T_score FROM grade;
+
+    -- normalized_score 및 grade 업데이트
+    UPDATE grade
+    SET 
+        normalized_score = ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3),
+        grade = CASE
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.2 THEN '가'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.4 THEN '나'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.6 THEN '다'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.8 THEN '라'
+            ELSE '마'
+        END
+    WHERE pnu = NEW.pnu;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 트리거 생성
+CREATE TRIGGER update_development_trigger
+AFTER INSERT OR UPDATE ON Development_Suitability
+FOR EACH ROW
+EXECUTE FUNCTION update_grade();
+
+CREATE TRIGGER update_conservation_trigger
+AFTER INSERT OR UPDATE ON Conservation_Suitability
+FOR EACH ROW
+EXECUTE FUNCTION update_grade();
+
+
+
+
+

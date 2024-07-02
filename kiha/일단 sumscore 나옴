@@ -274,7 +274,7 @@ CREATE TABLE Development_Suitability (
     dscore INT,
     pscore INT,
     rscore INT,
-    SumScore INT
+    DV_SumScore INT
 );
 
 INSERT INTO Development_Suitability (id, pnu, hscore, sscore, cvscore, dscore, pscore, rscore, SumScore)
@@ -288,7 +288,7 @@ SELECT
     COALESCE(p.pscore, 0) AS pscore,
     COALESCE(r.Rscore, 0) AS rscore,
     COALESCE(h.hscore, 0) + COALESCE(s.sscore, 0) + COALESCE(cv.CVscore, 0) +
-    COALESCE(d.Dscore, 0) + COALESCE(p.pscore, 0) + COALESCE(r.Rscore, 0) AS SumScore
+    COALESCE(d.Dscore, 0) + COALESCE(p.pscore, 0) + COALESCE(r.Rscore, 0) AS DV_SumScore
 FROM 
     info 
 LEFT JOIN develop AS d ON info.pnu = d.pnu
@@ -311,7 +311,7 @@ BEGIN
         dscore = COALESCE((SELECT Dscore FROM develop WHERE pnu = NEW.pnu), 0),
         pscore = COALESCE((SELECT pscore FROM pricerate WHERE pnu = NEW.pnu), 0),
         rscore = COALESCE((SELECT Rscore FROM road WHERE pnu = NEW.pnu), 0),
-        SumScore = COALESCE((SELECT hscore FROM high WHERE pnu = NEW.pnu), 0) 
+        DV_SumScore = COALESCE((SELECT hscore FROM high WHERE pnu = NEW.pnu), 0) 
                  + COALESCE((SELECT sscore FROM slant WHERE pnu = NEW.pnu), 0) 
                  + COALESCE((SELECT CVscore FROM CV WHERE pnu = NEW.pnu), 0) 
                  + COALESCE((SELECT Dscore FROM develop WHERE pnu = NEW.pnu), 0) 

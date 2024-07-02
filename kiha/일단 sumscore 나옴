@@ -277,7 +277,7 @@ CREATE TABLE Development_Suitability (
     DV_SumScore INT
 );
 
-INSERT INTO Development_Suitability (id, pnu, hscore, sscore, cvscore, dscore, pscore, rscore, SumScore)
+INSERT INTO Development_Suitability (id, pnu, hscore, sscore, cvscore, dscore, pscore, rscore, DV_SumScore)
 SELECT 
     info.id,
     info.pnu,

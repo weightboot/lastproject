@@ -1,0 +1,353 @@
+-- high 테이블
+DROP TABLE IF EXISTS high CASCADE;
+CREATE TABLE high (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    high INT,
+    hscore INT
+);
+
+INSERT INTO high (id, pnu, high)
+SELECT id, pnu, high
+FROM info
+ORDER BY pnu;
+
+UPDATE high
+SET hscore = CASE
+    WHEN high <= 50 THEN 100
+    WHEN high BETWEEN 51 AND 100 THEN 75
+    WHEN high BETWEEN 101 AND 150 THEN 50
+    WHEN high BETWEEN 151 AND 200 THEN 25
+    ELSE 0
+END;
+
+CREATE OR REPLACE FUNCTION calculate_hscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.hscore := CASE
+        WHEN NEW.high <= 50 THEN 100
+        WHEN NEW.high BETWEEN 51 AND 100 THEN 75
+        WHEN NEW.high BETWEEN 101 AND 150 THEN 50
+        WHEN NEW.high BETWEEN 151 AND 200 THEN 25
+        ELSE 0
+    END;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_hscore_trigger
+BEFORE INSERT OR UPDATE ON high
+FOR EACH ROW
+EXECUTE FUNCTION calculate_hscore_function();
+
+-- slant 테이블
+DROP TABLE IF EXISTS slant CASCADE;
+CREATE TABLE slant (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    slant VARCHAR(10),
+    sscore INT
+);
+
+INSERT INTO slant (id, pnu, slant)
+SELECT id, pnu, slant
+FROM info
+ORDER BY pnu;
+
+UPDATE slant
+SET sscore = CASE
+    WHEN slant IN ('평지', '저지') THEN 100
+    WHEN slant = '완경사' THEN 60
+    WHEN slant = '급경사' THEN 30
+    WHEN slant = '고지' THEN 0
+END;
+
+CREATE OR REPLACE FUNCTION calculate_sscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.sscore := CASE
+        WHEN NEW.slant IN ('평지', '저지') THEN 100
+        WHEN NEW.slant = '완경사' THEN 60
+        WHEN NEW.slant = '급경사' THEN 30
+        WHEN NEW.slant = '고지' THEN 0
+    END;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_sscore_trigger
+BEFORE INSERT OR UPDATE ON slant
+FOR EACH ROW
+EXECUTE FUNCTION calculate_sscore_function();
+
+-- CV 테이블
+DROP TABLE IF EXISTS CV CASCADE;
+CREATE TABLE CV (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    CVdist DOUBLE PRECISION,
+    CVscore INT
+);
+
+INSERT INTO CV (id, pnu, CVdist)
+SELECT id, pnu, "c.v dist"
+FROM info;
+
+UPDATE CV
+SET CVscore = CASE
+    WHEN CVdist <= 1 THEN 100
+    WHEN CVdist BETWEEN 1 AND 2 THEN 60
+    WHEN CVdist BETWEEN 2 AND 3 THEN 30
+    ELSE 0
+END;
+
+CREATE OR REPLACE FUNCTION calculate_CVscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.CVscore := CASE
+        WHEN NEW.CVdist <= 1 THEN 100
+        WHEN NEW.CVdist BETWEEN 1 AND 2 THEN 60
+        WHEN NEW.CVdist BETWEEN 2 AND 3 THEN 30
+        ELSE 0
+    END;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_CVscore_trigger
+BEFORE INSERT OR UPDATE ON CV
+FOR EACH ROW
+EXECUTE FUNCTION calculate_CVscore_function();
+
+-- develop 테이블
+DROP TABLE IF EXISTS develop CASCADE;
+CREATE TABLE develop (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    Ddist DOUBLE PRECISION,
+    Dscore INT
+);
+
+INSERT INTO develop (id, pnu, Ddist)
+SELECT id, pnu, ROUND(CAST(hubdist / 1000.0 AS NUMERIC), 3)
+FROM info;
+
+UPDATE develop
+SET Dscore = CASE
+    WHEN Ddist <= 1 THEN 100
+    WHEN Ddist BETWEEN 1 AND 1.5 THEN 75
+    WHEN Ddist BETWEEN 1.5 AND 2 THEN 50
+    WHEN Ddist BETWEEN 2 AND 3 THEN 25
+    ELSE 0
+END;
+
+CREATE OR REPLACE FUNCTION calculate_Dscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.Dscore := CASE
+        WHEN NEW.Ddist <= 1 THEN 100
+        WHEN NEW.Ddist BETWEEN 1 AND 1.5 THEN 75
+        WHEN NEW.Ddist BETWEEN 1.5 AND 2 THEN 50
+        WHEN NEW.Ddist BETWEEN 2 AND 3 THEN 25
+        ELSE 0
+    END;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_Dscore_trigger
+BEFORE INSERT OR UPDATE ON develop
+FOR EACH ROW
+EXECUTE FUNCTION calculate_Dscore_function();
+
+-- pricerate 테이블
+DROP TABLE IF EXISTS pricerate CASCADE;
+CREATE TABLE pricerate (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    price DOUBLE PRECISION,
+    pscore INT
+);
+
+DO $$ 
+DECLARE
+    min_price DOUBLE PRECISION;
+    max_price DOUBLE PRECISION;
+BEGIN
+    SELECT MIN(price), MAX(price) INTO min_price, max_price
+    FROM info
+    WHERE price IS NOT NULL;
+
+    INSERT INTO pricerate (id, pnu, price)
+    SELECT 
+        id,
+        pnu,
+        ROUND(CAST((price - min_price) / (max_price - min_price) AS NUMERIC), 3) AS normalized_price
+    FROM 
+        info
+    WHERE 
+        price IS NOT NULL
+    ORDER BY 
+        pnu;
+END $$;
+
+UPDATE pricerate
+SET pscore = CASE
+    WHEN price >= 0.8 THEN 100
+    WHEN price >= 0.6 AND price < 0.8 THEN 90
+    WHEN price >= 0.4 AND price < 0.6 THEN 70
+    WHEN price >= 0.2 AND price < 0.4 THEN 50
+    ELSE 30
+END;
+
+CREATE OR REPLACE FUNCTION calculate_pscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.pscore := CASE
+        WHEN NEW.price >= 0.8 THEN 100
+        WHEN NEW.price >= 0.6 AND NEW.price < 0.8 THEN 90
+        WHEN NEW.price >= 0.4 AND NEW.price < 0.6 THEN 70
+        WHEN NEW.price >= 0.2 AND NEW.price < 0.4 THEN 50
+        ELSE 30
+    END;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_pscore_trigger
+BEFORE INSERT OR UPDATE ON pricerate
+FOR EACH ROW
+EXECUTE FUNCTION calculate_pscore_function();
+
+-- road 테이블
+DROP TABLE IF EXISTS road CASCADE;
+CREATE TABLE road (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    Rdist DOUBLE PRECISION,
+    Rscore INT
+);
+
+INSERT INTO road (id, pnu)
+SELECT id, pnu
+FROM info
+ORDER BY pnu;
+
+UPDATE road
+SET Rscore = CASE
+    WHEN Rdist <= 1 THEN 100
+    WHEN Rdist BETWEEN 1 AND 2 THEN 75
+    WHEN Rdist BETWEEN 2 AND 3 THEN 50
+    WHEN Rdist BETWEEN 3 AND 4 THEN 25
+    ELSE 0
+END;
+
+CREATE OR REPLACE FUNCTION calculate_Rscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.Rscore := CASE
+        WHEN NEW.Rdist <= 1 THEN 100
+        WHEN NEW.Rdist BETWEEN 1 AND 2 THEN 75
+        WHEN NEW.Rdist BETWEEN 2 AND 3 THEN 50
+        WHEN NEW.Rdist BETWEEN 3 AND 4 THEN 25
+        ELSE 0
+    END;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_Rscore_trigger
+BEFORE INSERT OR UPDATE ON road
+FOR EACH ROW
+EXECUTE FUNCTION calculate_Rscore_function();
+
+-- Development_Suitability 테이블 및 연동 트리거 설정
+DROP TABLE IF EXISTS Development_Suitability CASCADE;
+CREATE TABLE Development_Suitability (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    hscore INT,
+    sscore INT,
+    cvscore INT,
+    dscore INT,
+    pscore INT,
+    rscore INT,
+    SumScore INT
+);
+
+INSERT INTO Development_Suitability (id, pnu, hscore, sscore, cvscore, dscore, pscore, rscore)
+SELECT 
+    info.id,
+    info.pnu,
+    COALESCE(h.hscore, 0) AS hscore,
+    COALESCE(s.sscore, 0) AS sscore,
+    COALESCE(cv.CVscore, 0) AS cvscore,
+    COALESCE(d.Dscore, 0) AS dscore,
+    COALESCE(p.pscore, 0) AS pscore,
+    COALESCE(r.Rscore, 0) AS rscore
+FROM 
+    info 
+LEFT JOIN develop AS d ON info.pnu = d.pnu
+LEFT JOIN high AS h ON info.pnu = h.pnu
+LEFT JOIN slant AS s ON info.pnu = s.pnu
+LEFT JOIN CV AS cv ON info.pnu = cv.pnu
+LEFT JOIN pricerate AS p ON info.pnu = p.pnu
+LEFT JOIN road AS r ON info.pnu = r.pnu
+ORDER BY info.pnu;
+
+CREATE OR REPLACE FUNCTION update_development_suitability()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE Development_Suitability
+    SET 
+        hscore = COALESCE((SELECT hscore FROM high WHERE pnu = NEW.pnu), 0),
+        sscore = COALESCE((SELECT sscore FROM slant WHERE pnu = NEW.pnu), 0),
+        cvscore = COALESCE((SELECT CVscore FROM CV WHERE pnu = NEW.pnu), 0),
+        dscore = COALESCE((SELECT Dscore FROM develop WHERE pnu = NEW.pnu), 0),
+        pscore = COALESCE((SELECT pscore FROM pricerate WHERE pnu = NEW.pnu), 0),
+        rscore = COALESCE((SELECT Rscore FROM road WHERE pnu = NEW.pnu), 0)
+    WHERE pnu = NEW.pnu;
+
+    -- Update the SumScore after updating individual scores
+    UPDATE Development_Suitability
+    SET SumScore = COALESCE(hscore, 0) 
+                 + COALESCE(sscore, 0) 
+                 + COALESCE(cvscore, 0) 
+                 + COALESCE(dscore, 0) 
+                 + COALESCE(pscore, 0) 
+                 + COALESCE(rscore, 0)
+    WHERE pnu = NEW.pnu;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_high_trigger
+AFTER INSERT OR UPDATE ON high
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+CREATE TRIGGER update_slant_trigger
+AFTER INSERT OR UPDATE ON slant
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+CREATE TRIGGER update_CV_trigger
+AFTER INSERT OR UPDATE ON CV
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+CREATE TRIGGER update_pricerate_trigger
+AFTER INSERT OR UPDATE ON pricerate
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+CREATE TRIGGER update_road_trigger
+AFTER INSERT OR UPDATE ON road
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+CREATE TRIGGER update_develop_trigger
+AFTER INSERT OR UPDATE ON develop
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();

@@ -566,8 +566,41 @@ EXECUTE FUNCTION calculate_FMscore_function();
 
 
 
+		// Sea 테이블 생성
+drop table Sea 
+
+CREATE TABLE Sea (
+    id INT,
+    pnu VARCHAR(20),
+    Seadist double precision,
+    Seascore INT
+);
+
+insert into Sea (id, pnu) 
+	select id, pnu from info
+	order by pnu;
 
 
+CREATE OR REPLACE FUNCTION calculate_Seascore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    NEW.Seascore := CASE
+        WHEN NEW.Seadist <= 1  THEN 100
+        WHEN NEW.Seadist > 1 and NEW.Seadist <= 2 THEN 75
+        WHEN NEW.Seadist > 2 and NEW.Seadist <= 3 THEN 50
+	 	WHEN NEW.Seadist > 3 and NEW.Seadist <= 4 THEN 25
+        WHEN NEW.Seadist > 4 THEN 0
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_Seascore_trigger
+BEFORE INSERT OR UPDATE ON Sea
+FOR EACH ROW
+EXECUTE FUNCTION calculate_Seascore_function();
 
 
 

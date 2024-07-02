@@ -275,7 +275,7 @@ CREATE TABLE Development_Suitability (
     SumScore INT
 );
 
-INSERT INTO Development_Suitability (id, pnu, hscore, sscore, cvscore, dscore, pscore, rscore)
+INSERT INTO Development_Suitability (id, pnu, hscore, sscore, cvscore, dscore, pscore, rscore, SumScore)
 SELECT 
     info.id,
     info.pnu,
@@ -284,7 +284,9 @@ SELECT
     COALESCE(cv.CVscore, 0) AS cvscore,
     COALESCE(d.Dscore, 0) AS dscore,
     COALESCE(p.pscore, 0) AS pscore,
-    COALESCE(r.Rscore, 0) AS rscore
+    COALESCE(r.Rscore, 0) AS rscore,
+    COALESCE(h.hscore, 0) + COALESCE(s.sscore, 0) + COALESCE(cv.CVscore, 0) +
+    COALESCE(d.Dscore, 0) + COALESCE(p.pscore, 0) + COALESCE(r.Rscore, 0) AS SumScore
 FROM 
     info 
 LEFT JOIN develop AS d ON info.pnu = d.pnu
@@ -298,6 +300,7 @@ ORDER BY info.pnu;
 CREATE OR REPLACE FUNCTION update_development_suitability()
 RETURNS TRIGGER AS $$
 BEGIN
+    -- Update individual scores
     UPDATE Development_Suitability
     SET 
         hscore = COALESCE((SELECT hscore FROM high WHERE pnu = NEW.pnu), 0),
@@ -305,49 +308,51 @@ BEGIN
         cvscore = COALESCE((SELECT CVscore FROM CV WHERE pnu = NEW.pnu), 0),
         dscore = COALESCE((SELECT Dscore FROM develop WHERE pnu = NEW.pnu), 0),
         pscore = COALESCE((SELECT pscore FROM pricerate WHERE pnu = NEW.pnu), 0),
-        rscore = COALESCE((SELECT Rscore FROM road WHERE pnu = NEW.pnu), 0)
-    WHERE pnu = NEW.pnu;
-
-    -- Update the SumScore after updating individual scores
-    UPDATE Development_Suitability
-    SET SumScore = COALESCE(hscore, 0) 
-                 + COALESCE(sscore, 0) 
-                 + COALESCE(cvscore, 0) 
-                 + COALESCE(dscore, 0) 
-                 + COALESCE(pscore, 0) 
-                 + COALESCE(rscore, 0)
+        rscore = COALESCE((SELECT Rscore FROM road WHERE pnu = NEW.pnu), 0),
+        SumScore = COALESCE((SELECT hscore FROM high WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT sscore FROM slant WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT CVscore FROM CV WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT Dscore FROM develop WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT pscore FROM pricerate WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT Rscore FROM road WHERE pnu = NEW.pnu), 0)
     WHERE pnu = NEW.pnu;
 
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
+-- high 테이블에 대한 업데이트 트리거
 CREATE TRIGGER update_high_trigger
 AFTER INSERT OR UPDATE ON high
 FOR EACH ROW
 EXECUTE FUNCTION update_development_suitability();
 
+-- slant 테이블에 대한 업데이트 트리거
 CREATE TRIGGER update_slant_trigger
 AFTER INSERT OR UPDATE ON slant
 FOR EACH ROW
 EXECUTE FUNCTION update_development_suitability();
 
+-- CV 테이블에 대한 업데이트 트리거
 CREATE TRIGGER update_CV_trigger
 AFTER INSERT OR UPDATE ON CV
 FOR EACH ROW
 EXECUTE FUNCTION update_development_suitability();
 
+-- develop 테이블에 대한 업데이트 트리거
+CREATE TRIGGER update_develop_trigger
+AFTER INSERT OR UPDATE ON develop
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- pricerate 테이블에 대한 업데이트 트리거
 CREATE TRIGGER update_pricerate_trigger
 AFTER INSERT OR UPDATE ON pricerate
 FOR EACH ROW
 EXECUTE FUNCTION update_development_suitability();
 
+-- road 테이블에 대한 업데이트 트리거
 CREATE TRIGGER update_road_trigger
 AFTER INSERT OR UPDATE ON road
-FOR EACH ROW
-EXECUTE FUNCTION update_development_suitability();
-
-CREATE TRIGGER update_develop_trigger
-AFTER INSERT OR UPDATE ON develop
 FOR EACH ROW
 EXECUTE FUNCTION update_development_suitability();

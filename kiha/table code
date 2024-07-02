@@ -1,4 +1,4 @@
-// high 테이블 생성
+// 1. high 테이블 생성
 create table high
 (id int, pnu varchar(20), high int, hscore int);
 
@@ -55,7 +55,7 @@ WHERE id = 1;
 
 
 
-         // slant 테이블 생성
+         // 2. slant 테이블 생성
 create table slant
 (id int, pnu varchar(20), slant varchar(10), sscore int);
 
@@ -109,7 +109,7 @@ EXECUTE FUNCTION calculate_sscore_function();
 
 
 
-	// CV 테이블 생성
+	//3. CV 테이블 생성
 drop table CV
 
 CREATE TABLE CV (
@@ -162,7 +162,7 @@ EXECUTE FUNCTION calculate_CVscore_function();
 
 
 
-  // develop 테이블 생성
+  //4. develop 테이블 생성
 drop table develop
 
 CREATE TABLE develop (
@@ -218,7 +218,7 @@ EXECUTE FUNCTION calculate_Dscore_function();
 
 
 
-	// pricerate 테이블 생성 
+	//5. pricerate 테이블 생성 
 drop table pricerate
 
 CREATE TABLE pricerate (
@@ -296,7 +296,7 @@ EXECUTE FUNCTION calculate_pscore_function();
 
 
 
- // Road 테이블 생성 코드
+ //6. Road 테이블 생성 코드
 
 drop table road
 
@@ -351,7 +351,7 @@ EXECUTE FUNCTION calculate_Rscore_function();
 
 
 
-// 보전적성 FMarea 테이블 생성
+// 7.보전적성 FMarea 테이블 생성
 
 drop table FMarea
 
@@ -392,7 +392,7 @@ EXECUTE FUNCTION calculate_Ascore_function();
 
 
 
-/// Ecorate 테이블 생성
+///8. Ecorate 테이블 생성
 drop table Ecorate
 
 CREATE TABLE Ecorate (
@@ -433,7 +433,7 @@ EXECUTE FUNCTION calculate_Escore_function();
 
 
 
-  	//RGarea 테이블 생성
+  	//9. RGarea 테이블 생성
 drop table RGarea
 
 CREATE TABLE RGarea (
@@ -480,7 +480,7 @@ EXECUTE FUNCTION calculate_RGAscore_function();
 
 
 
-	// regulation 테이블 생성
+	//10. regulation 테이블 생성
 drop table regulation
 
 CREATE TABLE regulation (
@@ -526,7 +526,7 @@ EXECUTE FUNCTION calculate_RGDscore_function();
 
 
 
-		// farm 테이블 생성
+		// 11. farm 테이블 생성
 drop table farm
 
 CREATE TABLE farm (
@@ -566,7 +566,7 @@ EXECUTE FUNCTION calculate_FMscore_function();
 
 
 
-		// Sea 테이블 생성
+		// 12. Sea 테이블 생성
 drop table Sea 
 
 CREATE TABLE Sea (

@@ -756,9 +756,9 @@ INSERT INTO grade (id, pnu, dv_sumscore, cs_sumscore, T_score)
 SELECT 
     dv.id,
     dv.pnu,
-    dv.SumScore AS dv_sumscore,
+    dv.DV_SumScore AS dv_sumscore,
     cs.CS_sumscore AS cs_sumscore,
-    dv.SumScore - cs.CS_sumscore AS T_score
+    dv.DV_SumScore - cs.CS_sumscore AS T_score
 FROM 
     Development_Suitability dv
 JOIN 
@@ -786,12 +786,7 @@ BEGIN
         END;
 END $$;
 
-
-
-
-
-
-
+-- update_grade 함수 생성
 CREATE OR REPLACE FUNCTION update_grade()
 RETURNS TRIGGER AS $$
 DECLARE
@@ -801,9 +796,9 @@ BEGIN
     -- grade 테이블 업데이트
     UPDATE grade
     SET 
-        dv_sumscore = (SELECT SumScore FROM Development_Suitability WHERE pnu = NEW.pnu),
+        dv_sumscore = (SELECT DV_SumScore FROM Development_Suitability WHERE pnu = NEW.pnu),
         cs_sumscore = (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu),
-        T_score = (SELECT SumScore FROM Development_Suitability WHERE pnu = NEW.pnu) - (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu)
+        T_score = (SELECT DV_SumScore FROM Development_Suitability WHERE pnu = NEW.pnu) - (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu)
     WHERE pnu = NEW.pnu;
 
     -- 최소값과 최대값 계산
@@ -836,6 +831,7 @@ CREATE TRIGGER update_conservation_trigger
 AFTER INSERT OR UPDATE ON Conservation_Suitability
 FOR EACH ROW
 EXECUTE FUNCTION update_grade();
+
 
 
 

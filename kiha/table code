@@ -612,6 +612,118 @@ EXECUTE FUNCTION calculate_Seascore_function();
 
 
 
+//  개발적성 종합 테이블  Development_Suitability 생성
+drop table Development_Suitability
+
+CREATE TABLE Development_Suitability (
+    id INT Primary key,
+    pnu VARCHAR(20),
+    hscore INT,
+    sscore INT,
+    cvscore INT,
+    dscore INT,
+    pscore INT,
+    rscore INT,
+    SumScore INT
+);
+
+INSERT INTO Development_Suitability (id, pnu, hscore, sscore, cvscore, dscore, pscore, rscore)
+SELECT 
+    info.id,
+    info.pnu,
+    COALESCE(h.hscore, 0) AS hscore,
+    COALESCE(s.sscore, 0) AS sscore,
+    COALESCE(cv.CVscore, 0) AS cvscore,
+    COALESCE(d.Dscore, 0) AS dscore,
+    COALESCE(p.pscore, 0) AS pscore,
+    COALESCE(r.Rscore, 0) AS rscore
+FROM 
+	info 
+LEFT JOIN develop as d ON info.pnu = d.pnu
+LEFT JOIN high as h ON info.pnu = h.pnu
+LEFT JOIN slant as s ON info.pnu = s.pnu
+LEFT JOIN CV as cv ON info.pnu = cv.pnu
+LEFT JOIN pricerate as p ON info.pnu = p.pnu
+LEFT JOIN road as r ON info.pnu = r.pnu
+ORDER BY info.pnu;
+
+
+CREATE OR REPLACE FUNCTION update_development_suitability()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE Development_Suitability
+    SET 
+        hscore = COALESCE(NEW.hscore, hscore),
+        sscore = COALESCE(NEW.sscore, sscore),
+        cvscore = COALESCE(NEW.cvscore, cvscore),
+        dscore = COALESCE(NEW.dscore, dscore),
+        pscore = COALESCE(NEW.pscore, pscore),
+        rscore = COALESCE(NEW.rscore, rscore)
+    WHERE pnu = NEW.pnu;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- high 테이블 트리거
+CREATE TRIGGER update_high_trigger
+AFTER INSERT OR UPDATE ON high
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- slant 테이블 트리거
+CREATE TRIGGER update_slant_trigger
+AFTER INSERT OR UPDATE ON slant
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- CV 테이블 트리거
+CREATE TRIGGER update_CV_trigger
+AFTER INSERT OR UPDATE ON CV
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- pricerate 테이블 트리거
+CREATE TRIGGER update_pricerate_trigger
+AFTER INSERT OR UPDATE ON pricerate
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- road 테이블 트리거
+CREATE TRIGGER update_road_trigger
+AFTER INSERT OR UPDATE ON road
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- develop 테이블 트리거
+CREATE TRIGGER update_develop_trigger
+AFTER INSERT OR UPDATE ON develop
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- SumScore 업데이트를 위한 함수 생성
+CREATE OR REPLACE FUNCTION update_sumscores()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.SumScore := COALESCE(NEW.hscore, 0) 
+                  + COALESCE(NEW.sscore, 0) 
+                  + COALESCE(NEW.cvscore, 0) 
+                  + COALESCE(NEW.dscore, 0) 
+                  + COALESCE(NEW.pscore, 0) 
+                  + COALESCE(NEW.rscore, 0);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Development_Suitability 테이블의 BEFORE INSERT OR UPDATE 트리거 생성
+CREATE TRIGGER update_sumscores_trigger
+BEFORE INSERT OR UPDATE ON Development_Suitability
+FOR EACH ROW
+EXECUTE FUNCTION update_sumscores();
+
+
+
+
+
 
 
 

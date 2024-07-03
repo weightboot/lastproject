@@ -29,8 +29,10 @@ CREATE TABLE polygon (
     P_CS_sumscore INT,
     P_T_score INT,
     P_normalized_score DOUBLE PRECISION,
-    P_grade VARCHAR(2)
+    P_grade VARCHAR(2),
+	geom geometry(polygon, 3857)
 );
+
 
 -- 각 속성값을 입력하여 SCORE값을 자동으로 계산하는 트리거 함수
 CREATE OR REPLACE FUNCTION calculate_polygon_scores()
@@ -39,9 +41,9 @@ BEGIN
     -- P_hscore 계산
     NEW.P_hscore := CASE
         WHEN NEW.P_high <= 50 THEN 100
-        WHEN NEW.P_high BETWEEN 51 AND 100 THEN 75
-        WHEN NEW.P_high BETWEEN 101 AND 150 THEN 50
-        WHEN NEW.P_high BETWEEN 151 AND 200 THEN 25
+        WHEN NEW.P_high > 50 AND NEW.P_high <= 100 THEN 75
+        WHEN NEW.P_high > 100 AND NEW.P_high <= 150 THEN 50
+        WHEN NEW.P_high > 150 AND NEW.P_high <= 200 THEN 25
         ELSE 0
     END;
 
@@ -56,17 +58,17 @@ BEGIN
     -- P_CVscore 계산
     NEW.P_CVscore := CASE
         WHEN NEW.P_CVdist <= 1 THEN 100
-        WHEN NEW.P_CVdist BETWEEN 1 AND 2 THEN 60
-        WHEN NEW.P_CVdist BETWEEN 2 AND 3 THEN 30
+        WHEN NEW.P_CVdist > 1 AND NEW.P_CVdist <= 2 THEN 60
+        WHEN NEW.P_CVdist > 2 AND NEW.P_CVdist <= 3 THEN 30
         ELSE 0
     END;
 
     -- P_Dscore 계산
     NEW.P_Dscore := CASE
         WHEN NEW.P_Ddist <= 1 THEN 100
-        WHEN NEW.P_Ddist BETWEEN 1 AND 1.5 THEN 75
-        WHEN NEW.P_Ddist BETWEEN 1.5 AND 2 THEN 50
-        WHEN NEW.P_Ddist BETWEEN 2 AND 3 THEN 25
+        WHEN NEW.P_Ddist > 1 AND NEW.P_Ddist <= 1.5 THEN 75
+        WHEN NEW.P_Ddist > 1.5 AND NEW.P_Ddist <= 2 THEN 50
+        WHEN NEW.P_Ddist > 2 AND NEW.P_Ddist <= 3 THEN 25
         ELSE 0
     END;
 
@@ -82,9 +84,9 @@ BEGIN
     -- P_Rscore 계산
     NEW.P_Rscore := CASE
         WHEN NEW.P_Rdist <= 1 THEN 100
-        WHEN NEW.P_Rdist BETWEEN 1 AND 2 THEN 75
-        WHEN NEW.P_Rdist BETWEEN 2 AND 3 THEN 50
-        WHEN NEW.P_Rdist BETWEEN 3 AND 4 THEN 25
+        WHEN NEW.P_Rdist > 1 AND NEW.P_Rdist <= 2 THEN 75
+        WHEN NEW.P_Rdist > 2 AND NEW.P_Rdist <= 3 THEN 50
+        WHEN NEW.P_Rdist > 3 AND NEW.P_Rdist <= 4 THEN 25
         ELSE 0
     END;
 
@@ -118,27 +120,27 @@ BEGIN
     -- P_RGDscore 계산
     NEW.P_RGDscore := CASE
         WHEN NEW.P_RGdist <= 1 THEN 100
-        WHEN NEW.P_RGdist BETWEEN 1 AND 2 THEN 75
-        WHEN NEW.P_RGdist BETWEEN 2 AND 3 THEN 50
-        WHEN NEW.P_RGdist BETWEEN 3 AND 4 THEN 25
+        WHEN NEW.P_RGdist > 1 AND NEW.P_RGdist <= 2 THEN 75
+        WHEN NEW.P_RGdist > 2 AND NEW.P_RGdist <= 3 THEN 50
+        WHEN NEW.P_RGdist > 3 AND NEW.P_RGdist <= 4 THEN 25
         ELSE 0
     END;
 
     -- P_FMscore 계산
     NEW.P_FMscore := CASE
         WHEN NEW.P_FMdist <= 1 THEN 100
-        WHEN NEW.P_FMdist BETWEEN 1 AND 2 THEN 75
-        WHEN NEW.P_FMdist BETWEEN 2 AND 3 THEN 50
-        WHEN NEW.P_FMdist BETWEEN 3 AND 4 THEN 25
+        WHEN NEW.P_FMdist > 1 AND NEW.P_FMdist <= 2 THEN 75
+        WHEN NEW.P_FMdist > 2 AND NEW.P_FMdist <= 3 THEN 50
+        WHEN NEW.P_FMdist > 3 AND NEW.P_FMdist <= 4 THEN 25
         ELSE 0
     END;
 
     -- P_Seascore 계산
     NEW.P_Seascore := CASE
         WHEN NEW.P_Seadist <= 1 THEN 100
-        WHEN NEW.P_Seadist BETWEEN 1 AND 2 THEN 75
-        WHEN NEW.P_Seadist BETWEEN 2 AND 3 THEN 50
-        WHEN NEW.P_Seadist BETWEEN 3 AND 4 THEN 25
+        WHEN NEW.P_Seadist > 1 AND NEW.P_Seadist <= 2 THEN 75
+        WHEN NEW.P_Seadist > 2 AND NEW.P_Seadist <= 3 THEN 50
+        WHEN NEW.P_Seadist > 3 AND NEW.P_Seadist <= 4 THEN 25
         ELSE 0
     END;
 
@@ -187,8 +189,14 @@ BEGIN
     -- 최소값과 최대값 계산
     SELECT MIN(P_T_score), MAX(P_T_score) INTO min_T_score, max_T_score FROM polygon;
 
-    -- P_normalized_score 및 P_grade 계산
-    NEW.P_normalized_score := ROUND(CAST((NEW.P_T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3);
+    -- 최소값과 최대값이 같은 경우를 처리
+    IF min_T_score = max_T_score THEN
+        NEW.P_normalized_score := 1;
+    ELSE
+        NEW.P_normalized_score := ROUND(CAST((NEW.P_T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3);
+    END IF;
+
+    -- P_grade 계산
     NEW.P_grade := CASE
         WHEN NEW.P_normalized_score < 0.2 THEN '가'
         WHEN NEW.P_normalized_score < 0.4 THEN '나'
@@ -206,3 +214,8 @@ CREATE TRIGGER calculate_t_score_and_grade_trigger
 BEFORE INSERT OR UPDATE ON polygon
 FOR EACH ROW
 EXECUTE FUNCTION calculate_t_score_and_grade();
+
+-- 확인용 자료 넣기 
+insert into polygon (P_high, P_slant, P_CVdist, P_Ddist,  P_price, P_Rdist, P_Arate
+	, P_Erate, P_RGArate, P_RGdist, P_FMdist, P_Seadist) values 
+	('1','평지','1','1','1','1','1','1','1','1','1','1');

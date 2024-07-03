@@ -837,3 +837,160 @@ EXECUTE FUNCTION update_grade();
 
 
 
+
+
+
+
+
+
+
+
+
+
+////////////////// view 테이블 생성 
+
+
+
+CREATE or replace VIEW Land_Evaluation_view AS
+SELECT 
+	info.id,
+	info.pnu,
+    FMarea.Arate,
+    Ecorate.Erate,
+    RGarea.RGArate,
+    regulation.RGdist,
+    farm.FMdist,
+    Sea.Seadist,
+    high.high,
+    slant.slant,
+    CV.CVdist,
+    pricerate.price,
+    road.Rdist,
+	grade.DV_sumscore,
+	grade.CS_sumscore,
+	grade.T_score,
+	grade.grade	
+FROM 
+    info
+JOIN 
+    FMarea ON info.pnu = FMarea.pnu
+JOIN 
+    Ecorate ON info.pnu = Ecorate.pnu
+JOIN 
+    RGarea ON info.pnu = RGarea.pnu
+JOIN 
+    regulation ON info.pnu = regulation.pnu
+JOIN 
+    farm ON info.pnu = farm.pnu
+JOIN 
+    Sea ON info.pnu = Sea.pnu
+JOIN 
+    high ON info.pnu = high.pnu
+JOIN 
+    slant ON info.pnu = slant.pnu
+JOIN 
+    CV ON info.pnu = CV.pnu
+JOIN 
+    pricerate ON info.pnu = pricerate.pnu
+JOIN 
+    road ON info.pnu = road.pnu
+join
+	grade on info.pnu = grade.pnu
+order by pnu;
+
+
+
+
+
+///// view테이블 속성 수정시 본판 테이블 수정 함수 및 트리거 생성
+CREATE OR REPLACE FUNCTION update_land_evaluation_view()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Update FMarea
+    IF NEW.Arate IS DISTINCT FROM OLD.Arate THEN
+        UPDATE FMarea
+        SET Arate = NEW.Arate
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update Ecorate
+    IF NEW.Erate IS DISTINCT FROM OLD.Erate THEN
+        UPDATE Ecorate
+        SET Erate = NEW.Erate
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update RGarea
+    IF NEW.RGArate IS DISTINCT FROM OLD.RGArate THEN
+        UPDATE RGarea
+        SET RGArate = NEW.RGArate
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update regulation
+    IF NEW.RGdist IS DISTINCT FROM OLD.RGdist THEN
+        UPDATE regulation
+        SET RGdist = NEW.RGdist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update farm
+    IF NEW.FMdist IS DISTINCT FROM OLD.FMdist THEN
+        UPDATE farm
+        SET FMdist = NEW.FMdist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update Sea
+    IF NEW.Seadist IS DISTINCT FROM OLD.Seadist THEN
+        UPDATE Sea
+        SET Seadist = NEW.Seadist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update high
+    IF NEW.high IS DISTINCT FROM OLD.high THEN
+        UPDATE high
+        SET high = NEW.high
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update slant
+    IF NEW.slant IS DISTINCT FROM OLD.slant THEN
+        UPDATE slant
+        SET slant = NEW.slant
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update CV
+    IF NEW.CVdist IS DISTINCT FROM OLD.CVdist THEN
+        UPDATE CV
+        SET CVdist = NEW.CVdist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update pricerate
+    IF NEW.price IS DISTINCT FROM OLD.price THEN
+        UPDATE pricerate
+        SET price = NEW.price
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update road
+    IF NEW.Rdist IS DISTINCT FROM OLD.Rdist THEN
+        UPDATE road
+        SET Rdist = NEW.Rdist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER instead_of_update_land_evaluation_view
+INSTEAD OF UPDATE ON Land_Evaluation_view
+FOR EACH ROW
+EXECUTE FUNCTION update_land_evaluation_view();
+
+update Land_Evaluation_view set high=500 where id=1;
+

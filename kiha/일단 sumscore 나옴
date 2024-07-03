@@ -869,6 +869,7 @@ SELECT
     slant.slant,
     CV.CVdist,
     road.Rdist,
+    develop.Ddist,
 	grade.DV_sumscore,
 	grade.CS_sumscore,
 	grade.T_score,
@@ -899,7 +900,9 @@ JOIN
 JOIN 
     road ON info.pnu = road.pnu
 join
-	grade on info.pnu = grade.pnu
+     grade on info.pnu = grade.pnu
+join
+     develop on info.pnu = develop.pnu
 order by pnu;
 
 

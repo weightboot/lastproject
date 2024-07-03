@@ -1,0 +1,769 @@
+-- 폴리곤 테이블 생성 --
+
+-- polygon 테이블--
+CREATE TABLE polygon (
+    id INT generated always as identity PRIMARY KEY,
+    P_high INT,
+    P_hscore INT,
+    P_slant varchar(10),
+    P_sscore int,
+    P_CVdist DOUBLE PRECISION,
+    P_CVscore int,
+    P_Ddist DOUBLE PRECISION,
+    P_Dscore INT,
+    P_price DOUBLE PRECISION,
+    P_pscore INT,
+    Rdist DOUBLE PRECISION,
+    Rscore INT,
+    DV_SumScore INT,
+    
+);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Development_Suitability 테이블 및 연동 트리거 설정
+DROP TABLE IF EXISTS Development_Suitability CASCADE;
+CREATE TABLE Development_Suitability (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    hscore INT,
+    sscore INT,
+    cvscore INT,
+    dscore INT,
+    pscore INT,
+    rscore INT,
+    DV_SumScore INT
+);
+
+INSERT INTO Development_Suitability (id, pnu, hscore, sscore, cvscore, dscore, pscore, rscore, DV_SumScore)
+SELECT 
+    info.id,
+    info.pnu,
+    COALESCE(h.hscore, 0) AS hscore,
+    COALESCE(s.sscore, 0) AS sscore,
+    COALESCE(cv.CVscore, 0) AS cvscore,
+    COALESCE(d.Dscore, 0) AS dscore,
+    COALESCE(p.pscore, 0) AS pscore,
+    COALESCE(r.Rscore, 0) AS rscore,
+    COALESCE(h.hscore, 0) + COALESCE(s.sscore, 0) + COALESCE(cv.CVscore, 0) +
+    COALESCE(d.Dscore, 0) + COALESCE(p.pscore, 0) + COALESCE(r.Rscore, 0) AS DV_SumScore
+FROM 
+    info 
+LEFT JOIN develop AS d ON info.pnu = d.pnu
+LEFT JOIN high AS h ON info.pnu = h.pnu
+LEFT JOIN slant AS s ON info.pnu = s.pnu
+LEFT JOIN CV AS cv ON info.pnu = cv.pnu
+LEFT JOIN pricerate AS p ON info.pnu = p.pnu
+LEFT JOIN road AS r ON info.pnu = r.pnu
+ORDER BY info.pnu;
+
+CREATE OR REPLACE FUNCTION update_development_suitability()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Update individual scores
+    UPDATE Development_Suitability
+    SET 
+        hscore = COALESCE((SELECT hscore FROM high WHERE pnu = NEW.pnu), 0),
+        sscore = COALESCE((SELECT sscore FROM slant WHERE pnu = NEW.pnu), 0),
+        cvscore = COALESCE((SELECT CVscore FROM CV WHERE pnu = NEW.pnu), 0),
+        dscore = COALESCE((SELECT Dscore FROM develop WHERE pnu = NEW.pnu), 0),
+        pscore = COALESCE((SELECT pscore FROM pricerate WHERE pnu = NEW.pnu), 0),
+        rscore = COALESCE((SELECT Rscore FROM road WHERE pnu = NEW.pnu), 0),
+        DV_SumScore = COALESCE((SELECT hscore FROM high WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT sscore FROM slant WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT CVscore FROM CV WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT Dscore FROM develop WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT pscore FROM pricerate WHERE pnu = NEW.pnu), 0) 
+                 + COALESCE((SELECT Rscore FROM road WHERE pnu = NEW.pnu), 0)
+    WHERE pnu = NEW.pnu;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- high 테이블에 대한 업데이트 트리거
+CREATE TRIGGER update_high_trigger
+AFTER INSERT OR UPDATE ON high
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- slant 테이블에 대한 업데이트 트리거
+CREATE TRIGGER update_slant_trigger
+AFTER INSERT OR UPDATE ON slant
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- CV 테이블에 대한 업데이트 트리거
+CREATE TRIGGER update_CV_trigger
+AFTER INSERT OR UPDATE ON CV
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- develop 테이블에 대한 업데이트 트리거
+CREATE TRIGGER update_develop_trigger
+AFTER INSERT OR UPDATE ON develop
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- pricerate 테이블에 대한 업데이트 트리거
+CREATE TRIGGER update_pricerate_trigger
+AFTER INSERT OR UPDATE ON pricerate
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+-- road 테이블에 대한 업데이트 트리거
+CREATE TRIGGER update_road_trigger
+AFTER INSERT OR UPDATE ON road
+FOR EACH ROW
+EXECUTE FUNCTION update_development_suitability();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// 7.보전적성 FMarea 테이블 생성
+
+drop table FMarea
+
+CREATE TABLE FMarea (
+    id INT,
+    pnu VARCHAR(20),
+    Arate DOUBLE PRECISION,
+    Ascore INT
+);
+
+insert into FMarea (id, pnu) 
+	select id, pnu from info
+	order by pnu;
+
+
+CREATE OR REPLACE FUNCTION calculate_Ascore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    NEW.Ascore := CASE
+        WHEN NEW.Arate >= 0.8  THEN 100
+        WHEN NEW.Arate >= 0.6 and NEW.Arate < 0.8 THEN 90
+        WHEN NEW.Arate >= 0.4 and NEW.Arate < 0.6 THEN 70
+		WHEN NEW.Arate >= 0.2 and NEW.Arate < 0.4 THEN 50
+        WHEN NEW.Arate < 0.2 then 30
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_Ascore_trigger
+BEFORE INSERT OR UPDATE ON FMarea
+FOR EACH ROW
+EXECUTE FUNCTION calculate_Ascore_function();
+
+
+
+
+
+///8. Ecorate 테이블 생성
+drop table Ecorate
+
+CREATE TABLE Ecorate (
+    id INT,
+    pnu VARCHAR(20),
+    Erate DOUBLE PRECISION,
+    Escore INT
+);
+
+insert into Ecorate (id, pnu) 
+	select id, pnu from info
+	order by pnu;
+
+
+CREATE OR REPLACE FUNCTION calculate_Escore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    NEW.Escore := CASE
+        WHEN NEW.Erate >= 0.8  THEN 100
+        WHEN NEW.Erate >= 0.6 and NEW.Erate < 0.8 THEN 90
+        WHEN NEW.Erate >= 0.4 and NEW.Erate < 0.6 THEN 70
+		WHEN NEW.Erate >= 0.2 and NEW.Erate < 0.4 THEN 50
+        WHEN NEW.Erate < 0.2 then 30
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_Escore_trigger
+BEFORE INSERT OR UPDATE ON Ecorate
+FOR EACH ROW
+EXECUTE FUNCTION calculate_Escore_function();
+
+
+
+
+
+
+  	//9. RGarea 테이블 생성
+drop table RGarea
+
+CREATE TABLE RGarea (
+    id INT,
+    pnu VARCHAR(20),
+    RGArate DOUBLE PRECISION,
+    RGAscore INT
+);
+
+insert into RGarea (id, pnu) 
+	select id, pnu from info
+	order by pnu;
+
+
+CREATE OR REPLACE FUNCTION calculate_RGAscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    NEW.RGAscore := CASE
+        WHEN NEW.RGArate >= 0.8  THEN 100
+        WHEN NEW.RGArate >= 0.6 and NEW.RGArate < 0.8 THEN 90
+        WHEN NEW.RGArate >= 0.4 and NEW.RGArate < 0.6 THEN 70
+		WHEN NEW.RGArate >= 0.2 and NEW.RGArate < 0.4 THEN 50
+        WHEN NEW.RGArate < 0.2 then 30
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_RGAscore_trigger
+BEFORE INSERT OR UPDATE ON RGarea
+FOR EACH ROW
+EXECUTE FUNCTION calculate_RGAscore_function();
+
+
+
+
+
+
+
+
+
+
+
+
+	//10. regulation 테이블 생성
+drop table regulation
+
+CREATE TABLE regulation (
+    id INT,
+    pnu VARCHAR(20),
+    RGdist double precision,
+    RGDscore INT
+);
+
+insert into regulation (id, pnu) 
+	select id, pnu from info
+	order by pnu;
+
+
+CREATE OR REPLACE FUNCTION calculate_RGDscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    NEW.RGDscore := CASE
+        WHEN NEW.RGdist <= 1  THEN 100
+        WHEN NEW.RGdist > 1 and NEW.RGdist <= 2 THEN 75
+        WHEN NEW.RGdist > 2 and NEW.RGdist <= 3 THEN 50
+	 	WHEN NEW.RGdist > 3 and NEW.RGdist <= 4 THEN 25
+        WHEN NEW.RGdist > 4 THEN 0
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_RGDscore_trigger
+BEFORE INSERT OR UPDATE ON regulation
+FOR EACH ROW
+EXECUTE FUNCTION calculate_RGDscore_function();
+
+
+
+
+
+
+
+
+
+
+
+		// 11. farm 테이블 생성
+drop table farm
+
+CREATE TABLE farm (
+    id INT,
+    pnu VARCHAR(20),
+    FMdist double precision,
+    FMscore INT
+);
+
+insert into farm (id, pnu) 
+	select id, pnu from info
+	order by pnu;
+
+
+CREATE OR REPLACE FUNCTION calculate_FMscore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    NEW.FMscore := CASE
+        WHEN NEW.FMdist <= 1  THEN 100
+        WHEN NEW.FMdist > 1 and NEW.FMdist <= 2 THEN 75
+        WHEN NEW.FMdist > 2 and NEW.FMdist <= 3 THEN 50
+	 	WHEN NEW.FMdist > 3 and NEW.FMdist <= 4 THEN 25
+        WHEN NEW.FMdist > 4 THEN 0
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_FMscore_trigger
+BEFORE INSERT OR UPDATE ON Farm
+FOR EACH ROW
+EXECUTE FUNCTION calculate_FMscore_function();
+
+
+
+
+
+		// 12. Sea 테이블 생성
+drop table Sea 
+
+CREATE TABLE Sea (
+    id INT,
+    pnu VARCHAR(20),
+    Seadist double precision,
+    Seascore INT
+);
+
+insert into Sea (id, pnu) 
+	select id, pnu from info
+	order by pnu;
+
+
+CREATE OR REPLACE FUNCTION calculate_Seascore_function()
+RETURNS TRIGGER AS $$
+BEGIN
+
+    NEW.Seascore := CASE
+        WHEN NEW.Seadist <= 1  THEN 100
+        WHEN NEW.Seadist > 1 and NEW.Seadist <= 2 THEN 75
+        WHEN NEW.Seadist > 2 and NEW.Seadist <= 3 THEN 50
+	 	WHEN NEW.Seadist > 3 and NEW.Seadist <= 4 THEN 25
+        WHEN NEW.Seadist > 4 THEN 0
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER calculate_Seascore_trigger
+BEFORE INSERT OR UPDATE ON Sea
+FOR EACH ROW
+EXECUTE FUNCTION calculate_Seascore_function();
+
+
+
+
+DROP TABLE IF EXISTS Conservation_Suitability CASCADE;
+CREATE TABLE Conservation_Suitability (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    Ascore INT,
+    Escore INT,
+    RGAscore INT,
+    RGDscore INT,
+    FMscore INT,
+    Seascore INT,
+    CS_sumscore INT
+);
+
+INSERT INTO Conservation_Suitability (id, pnu, Ascore, Escore, RGAscore, RGDscore, FMscore, Seascore, CS_sumscore)
+SELECT 
+    info.id,
+    info.pnu,
+    COALESCE(a.Ascore, 0) AS Ascore,
+    COALESCE(e.Escore, 0) AS Escore,
+    COALESCE(rg.RGAscore, 0) AS RGAscore,
+    COALESCE(r.RGDscore, 0) AS RGDscore,
+    COALESCE(f.FMscore, 0) AS FMscore,
+    COALESCE(s.Seascore, 0) AS Seascore,
+    COALESCE(a.Ascore, 0) + COALESCE(e.Escore, 0) + COALESCE(rg.RGAscore, 0) +
+    COALESCE(r.RGDscore, 0) + COALESCE(f.FMscore, 0) + COALESCE(s.Seascore, 0) AS CS_sumscore
+FROM 
+    info 
+LEFT JOIN FMarea AS a ON info.pnu = a.pnu
+LEFT JOIN Ecorate AS e ON info.pnu = e.pnu
+LEFT JOIN RGarea AS rg ON info.pnu = rg.pnu
+LEFT JOIN regulation AS r ON info.pnu = r.pnu
+LEFT JOIN farm AS f ON info.pnu = f.pnu
+LEFT JOIN Sea AS s ON info.pnu = s.pnu
+ORDER BY info.pnu;
+
+CREATE OR REPLACE FUNCTION update_conservation_suitability()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Update individual scores
+    UPDATE Conservation_Suitability
+    SET 
+        Ascore = COALESCE((SELECT Ascore FROM FMarea WHERE pnu = NEW.pnu), 0),
+        Escore = COALESCE((SELECT Escore FROM Ecorate WHERE pnu = NEW.pnu), 0),
+        RGAscore = COALESCE((SELECT RGAscore FROM RGarea WHERE pnu = NEW.pnu), 0),
+        RGDscore = COALESCE((SELECT RGDscore FROM regulation WHERE pnu = NEW.pnu), 0),
+        FMscore = COALESCE((SELECT FMscore FROM farm WHERE pnu = NEW.pnu), 0),
+        Seascore = COALESCE((SELECT Seascore FROM Sea WHERE pnu = NEW.pnu), 0),
+        CS_sumscore = COALESCE((SELECT Ascore FROM FMarea WHERE pnu = NEW.pnu), 0) 
+                     + COALESCE((SELECT Escore FROM Ecorate WHERE pnu = NEW.pnu), 0) 
+                     + COALESCE((SELECT RGAscore FROM RGarea WHERE pnu = NEW.pnu), 0) 
+                     + COALESCE((SELECT RGDscore FROM regulation WHERE pnu = NEW.pnu), 0) 
+                     + COALESCE((SELECT FMscore FROM farm WHERE pnu = NEW.pnu), 0) 
+                     + COALESCE((SELECT Seascore FROM Sea WHERE pnu = NEW.pnu), 0)
+    WHERE pnu = NEW.pnu;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 각 테이블에 대한 업데이트 트리거 설정
+CREATE TRIGGER update_FMarea_trigger
+AFTER INSERT OR UPDATE ON FMarea
+FOR EACH ROW
+EXECUTE FUNCTION update_conservation_suitability();
+
+CREATE TRIGGER update_Ecorate_trigger
+AFTER INSERT OR UPDATE ON Ecorate
+FOR EACH ROW
+EXECUTE FUNCTION update_conservation_suitability();
+
+CREATE TRIGGER update_RGarea_trigger
+AFTER INSERT OR UPDATE ON RGarea
+FOR EACH ROW
+EXECUTE FUNCTION update_conservation_suitability();
+
+CREATE TRIGGER update_regulation_trigger
+AFTER INSERT OR UPDATE ON regulation
+FOR EACH ROW
+EXECUTE FUNCTION update_conservation_suitability();
+
+CREATE TRIGGER update_farm_trigger
+AFTER INSERT OR UPDATE ON farm
+FOR EACH ROW
+EXECUTE FUNCTION update_conservation_suitability();
+
+CREATE TRIGGER update_Sea_trigger
+AFTER INSERT OR UPDATE ON Sea
+FOR EACH ROW
+EXECUTE FUNCTION update_conservation_suitability();
+
+
+
+
+
+
+
+
+
+
+///////////////////////grade 테이블 생성
+-- grade 테이블 생성
+DROP TABLE IF EXISTS grade CASCADE;
+CREATE TABLE grade (
+    id INT PRIMARY KEY,
+    pnu VARCHAR(20),
+    dv_sumscore INT,
+    cs_sumscore INT,
+    T_score INT,
+    normalized_score DOUBLE PRECISION,
+    grade VARCHAR(2)
+);
+
+-- 데이터 초기 삽입
+INSERT INTO grade (id, pnu, dv_sumscore, cs_sumscore, T_score)
+SELECT 
+    dv.id,
+    dv.pnu,
+    dv.DV_SumScore AS dv_sumscore,
+    cs.CS_sumscore AS cs_sumscore,
+    dv.DV_SumScore - cs.CS_sumscore AS T_score
+FROM 
+    Development_Suitability dv
+JOIN 
+    Conservation_Suitability cs ON dv.pnu = cs.pnu
+ORDER BY 
+    dv.pnu;
+
+-- 최소값과 최대값 계산
+DO $$ 
+DECLARE
+    min_T_score INT;
+    max_T_score INT;
+BEGIN
+    SELECT MIN(T_score), MAX(T_score) INTO min_T_score, max_T_score FROM grade;
+
+    -- normalized_score 및 grade 업데이트
+    UPDATE grade
+    SET normalized_score = ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3),
+        grade = CASE
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.2 THEN '가'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.4 THEN '나'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.6 THEN '다'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.8 THEN '라'
+            ELSE '마'
+        END;
+END $$;
+
+-- update_grade 함수 생성
+CREATE OR REPLACE FUNCTION update_grade()
+RETURNS TRIGGER AS $$
+DECLARE
+    min_T_score INT;
+    max_T_score INT;
+BEGIN
+    -- grade 테이블 업데이트
+    UPDATE grade
+    SET 
+        dv_sumscore = (SELECT DV_SumScore FROM Development_Suitability WHERE pnu = NEW.pnu),
+        cs_sumscore = (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu),
+        T_score = (SELECT DV_SumScore FROM Development_Suitability WHERE pnu = NEW.pnu) - (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu)
+    WHERE pnu = NEW.pnu;
+
+    -- 최소값과 최대값 계산
+    SELECT MIN(T_score), MAX(T_score) INTO min_T_score, max_T_score FROM grade;
+
+    -- normalized_score 및 grade 업데이트
+    UPDATE grade
+    SET 
+        normalized_score = ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3),
+        grade = CASE
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.2 THEN '가'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.4 THEN '나'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.6 THEN '다'
+            WHEN ROUND(CAST((T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3) < 0.8 THEN '라'
+            ELSE '마'
+        END
+    WHERE pnu = NEW.pnu;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 트리거 생성
+CREATE TRIGGER update_development_trigger
+AFTER INSERT OR UPDATE ON Development_Suitability
+FOR EACH ROW
+EXECUTE FUNCTION update_grade();
+
+CREATE TRIGGER update_conservation_trigger
+AFTER INSERT OR UPDATE ON Conservation_Suitability
+FOR EACH ROW
+EXECUTE FUNCTION update_grade();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+////////////////// view 테이블 생성 
+
+
+
+CREATE or replace VIEW Land_Evaluation_view AS
+SELECT 
+	info.id,
+	info.pnu,
+    FMarea.Arate,
+    Ecorate.Erate,
+    RGarea.RGArate,
+    regulation.RGdist,
+    farm.FMdist,
+    Sea.Seadist,
+    high.high,
+    slant.slant,
+    CV.CVdist,
+    pricerate.price,
+    road.Rdist,
+	grade.DV_sumscore,
+	grade.CS_sumscore,
+	grade.T_score,
+	grade.grade,
+	info.geom
+FROM 
+    info
+JOIN 
+    FMarea ON info.pnu = FMarea.pnu
+JOIN 
+    Ecorate ON info.pnu = Ecorate.pnu
+JOIN 
+    RGarea ON info.pnu = RGarea.pnu
+JOIN 
+    regulation ON info.pnu = regulation.pnu
+JOIN 
+    farm ON info.pnu = farm.pnu
+JOIN 
+    Sea ON info.pnu = Sea.pnu
+JOIN 
+    high ON info.pnu = high.pnu
+JOIN 
+    slant ON info.pnu = slant.pnu
+JOIN 
+    CV ON info.pnu = CV.pnu
+JOIN 
+    pricerate ON info.pnu = pricerate.pnu
+JOIN 
+    road ON info.pnu = road.pnu
+join
+	grade on info.pnu = grade.pnu
+order by pnu;
+
+
+
+
+
+///// view테이블 속성 수정시 본판 테이블 수정 함수 및 트리거 생성
+CREATE OR REPLACE FUNCTION update_land_evaluation_view()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Update FMarea
+    IF NEW.Arate IS DISTINCT FROM OLD.Arate THEN
+        UPDATE FMarea
+        SET Arate = NEW.Arate
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update Ecorate
+    IF NEW.Erate IS DISTINCT FROM OLD.Erate THEN
+        UPDATE Ecorate
+        SET Erate = NEW.Erate
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update RGarea
+    IF NEW.RGArate IS DISTINCT FROM OLD.RGArate THEN
+        UPDATE RGarea
+        SET RGArate = NEW.RGArate
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update regulation
+    IF NEW.RGdist IS DISTINCT FROM OLD.RGdist THEN
+        UPDATE regulation
+        SET RGdist = NEW.RGdist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update farm
+    IF NEW.FMdist IS DISTINCT FROM OLD.FMdist THEN
+        UPDATE farm
+        SET FMdist = NEW.FMdist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update Sea
+    IF NEW.Seadist IS DISTINCT FROM OLD.Seadist THEN
+        UPDATE Sea
+        SET Seadist = NEW.Seadist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update high
+    IF NEW.high IS DISTINCT FROM OLD.high THEN
+        UPDATE high
+        SET high = NEW.high
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update slant
+    IF NEW.slant IS DISTINCT FROM OLD.slant THEN
+        UPDATE slant
+        SET slant = NEW.slant
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update CV
+    IF NEW.CVdist IS DISTINCT FROM OLD.CVdist THEN
+        UPDATE CV
+        SET CVdist = NEW.CVdist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update pricerate
+    IF NEW.price IS DISTINCT FROM OLD.price THEN
+        UPDATE pricerate
+        SET price = NEW.price
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    -- Update road
+    IF NEW.Rdist IS DISTINCT FROM OLD.Rdist THEN
+        UPDATE road
+        SET Rdist = NEW.Rdist
+        WHERE pnu = NEW.pnu;
+    END IF;
+    
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER instead_of_update_land_evaluation_view
+INSTEAD OF UPDATE ON Land_Evaluation_view
+FOR EACH ROW
+EXECUTE FUNCTION update_land_evaluation_view();
+
+update Land_Evaluation_view set high=500 where id=1;

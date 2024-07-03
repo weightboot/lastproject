@@ -857,7 +857,7 @@ SELECT
 	info.pnu,
 	info.address,
 	info.area,
-	info.young,
+	info.youngdo,
     pricerate.price,
     FMarea.Arate,
     Ecorate.Erate,

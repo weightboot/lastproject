@@ -855,6 +855,10 @@ CREATE or replace VIEW Land_Evaluation_view AS
 SELECT 
 	info.id,
 	info.pnu,
+	info.address,
+	info.area,
+	info.young,
+	info.price,
     FMarea.Arate,
     Ecorate.Erate,
     RGarea.RGArate,

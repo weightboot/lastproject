@@ -12,7 +12,8 @@
     String land_score_submit = request.getParameter("land_score_submit");
     String char_score_submit = request.getParameter("char_score_submit");  
     String total_score_submit = request.getParameter("total_score_submit");    
-    out.println(sql_id);
+    String sql_id_array [] = sql_id.split(",");
+    out.println(sql_id_array[0]);
     out.println(land_score_submit);
     out.println(sql_id);
 %>
@@ -59,17 +60,16 @@
         // rs_count.close();
         // ////----- cvshop이 테이블의 전체 데이터 갯수를 가져오기 끝. -----/////
 
-
-
         // DBMS에 쿼리할 준비를 한다.
         stmt = con.createStatement();
-
-        String qryCVS = "update first_data set land_score = '"+land_score_submit+"',char_score = '"+char_score_submit+"',total_score ='"+total_score_submit+"' where id="+sql_id;
+        for(int i=0;i<sql_id_array.length;i++){
+        
+        String qryCVS = "update first_data set land_score = '"+land_score_submit+"',char_score = '"+char_score_submit+"',total_score ='"+total_score_submit+"' where id="+sql_id_array [i];
         // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.        
                 
         // select 쿼리를 실행한다. 검색 결과가 rs에 담긴다.
         stmt.executeUpdate(qryCVS);
-        
+        }
         //값을 입력 하기 떄문에 정보를 보여주는게 필요가 없다
         // if (rs_cvs.next())
         // {
@@ -102,7 +102,7 @@
         out.println("err: " + ex.toString());
     }
 
-    response.sendRedirect("index.html");
+    //response.sendRedirect("index.html");
 %>	
 <%-- <script>
 alert("저장 성공!");

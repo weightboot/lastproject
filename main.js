@@ -478,7 +478,7 @@ const infoBox = document.getElementById('info');
 
 selectedFeatures.on(['add', 'remove'], function () {
   const names = selectedFeatures.getArray().map((feature) => {
-    return feature.get('address');//id값을 리턴후 jsp로 넘김을 해야하는데 이걸 보면 다른 피쳐값도 넘길수 있을거 같다 근데 방법을 찾아야됨
+    return feature.get('id');//id값을 리턴후 jsp로 넘김을 해야하는데 이걸 보면 다른 피쳐값도 넘길수 있을거 같다 근데 방법을 찾아야됨
   });
   if (names.length > 1) {
     infoBox.innerHTML = names.length;//드래그박스로 선택한 객체의 갯수 표현
@@ -487,6 +487,8 @@ selectedFeatures.on(['add', 'remove'], function () {
   } else{
     infoBox.innerHTML = 'None';
   }
+  let name_field = document.getElementById("sql_id");
+  name_field.value=names;//강제로 html id값을 변경
 });
 
 // document.getElementById('sido01').onclick = () => {

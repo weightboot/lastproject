@@ -1,14 +1,12 @@
--- 폴리곤 테이블 생성 --
-
--- polygon 테이블--
+-- polygon 테이블 생성
 CREATE TABLE polygon (
-    id INT generated always as identity PRIMARY KEY,
+    id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     P_high DOUBLE PRECISION,
     P_hscore INT,
-    P_slant varchar(10),
-    P_sscore int,
+    P_slant VARCHAR(10),
+    P_sscore INT,
     P_CVdist DOUBLE PRECISION,
-    P_CVscore int,
+    P_CVscore INT,
     P_Ddist DOUBLE PRECISION,
     P_Dscore INT,
     P_price DOUBLE PRECISION,
@@ -21,11 +19,11 @@ CREATE TABLE polygon (
     P_Escore INT,
     P_RGArate DOUBLE PRECISION,
     P_RGAscore INT,
-    P_RGdist double precision,
+    P_RGdist DOUBLE PRECISION,
     P_RGDscore INT,
-    P_FMdist double precision,
+    P_FMdist DOUBLE PRECISION,
     P_FMscore INT,
-    P_Seadist double precision,
+    P_Seadist DOUBLE PRECISION,
     P_Seascore INT,
     P_DV_SumScore INT,
     P_CS_sumscore INT,
@@ -34,6 +32,177 @@ CREATE TABLE polygon (
     P_grade VARCHAR(2)
 );
 
+-- 각 속성값을 입력하여 SCORE값을 자동으로 계산하는 트리거 함수
+CREATE OR REPLACE FUNCTION calculate_polygon_scores()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- P_hscore 계산
+    NEW.P_hscore := CASE
+        WHEN NEW.P_high <= 50 THEN 100
+        WHEN NEW.P_high BETWEEN 51 AND 100 THEN 75
+        WHEN NEW.P_high BETWEEN 101 AND 150 THEN 50
+        WHEN NEW.P_high BETWEEN 151 AND 200 THEN 25
+        ELSE 0
+    END;
 
+    -- P_sscore 계산
+    NEW.P_sscore := CASE
+        WHEN NEW.P_slant IN ('평지', '저지') THEN 100
+        WHEN NEW.P_slant = '완경사' THEN 60
+        WHEN NEW.P_slant = '급경사' THEN 30
+        WHEN NEW.P_slant = '고지' THEN 0
+    END;
 
+    -- P_CVscore 계산
+    NEW.P_CVscore := CASE
+        WHEN NEW.P_CVdist <= 1 THEN 100
+        WHEN NEW.P_CVdist BETWEEN 1 AND 2 THEN 60
+        WHEN NEW.P_CVdist BETWEEN 2 AND 3 THEN 30
+        ELSE 0
+    END;
 
+    -- P_Dscore 계산
+    NEW.P_Dscore := CASE
+        WHEN NEW.P_Ddist <= 1 THEN 100
+        WHEN NEW.P_Ddist BETWEEN 1 AND 1.5 THEN 75
+        WHEN NEW.P_Ddist BETWEEN 1.5 AND 2 THEN 50
+        WHEN NEW.P_Ddist BETWEEN 2 AND 3 THEN 25
+        ELSE 0
+    END;
+
+    -- P_pscore 계산
+    NEW.P_pscore := CASE
+        WHEN NEW.P_price >= 0.8 THEN 100
+        WHEN NEW.P_price >= 0.6 AND NEW.P_price < 0.8 THEN 90
+        WHEN NEW.P_price >= 0.4 AND NEW.P_price < 0.6 THEN 70
+        WHEN NEW.P_price >= 0.2 AND NEW.P_price < 0.4 THEN 50
+        ELSE 30
+    END;
+
+    -- P_Rscore 계산
+    NEW.P_Rscore := CASE
+        WHEN NEW.P_Rdist <= 1 THEN 100
+        WHEN NEW.P_Rdist BETWEEN 1 AND 2 THEN 75
+        WHEN NEW.P_Rdist BETWEEN 2 AND 3 THEN 50
+        WHEN NEW.P_Rdist BETWEEN 3 AND 4 THEN 25
+        ELSE 0
+    END;
+
+    -- P_Ascore 계산
+    NEW.P_Ascore := CASE
+        WHEN NEW.P_Arate >= 0.8 THEN 100
+        WHEN NEW.P_Arate >= 0.6 AND NEW.P_Arate < 0.8 THEN 90
+        WHEN NEW.P_Arate >= 0.4 AND NEW.P_Arate < 0.6 THEN 70
+        WHEN NEW.P_Arate >= 0.2 AND NEW.P_Arate < 0.4 THEN 50
+        ELSE 30
+    END;
+
+    -- P_Escore 계산
+    NEW.P_Escore := CASE
+        WHEN NEW.P_Erate >= 0.8 THEN 100
+        WHEN NEW.P_Erate >= 0.6 AND NEW.P_Erate < 0.8 THEN 90
+        WHEN NEW.P_Erate >= 0.4 AND NEW.P_Erate < 0.6 THEN 70
+        WHEN NEW.P_Erate >= 0.2 AND NEW.P_Erate < 0.4 THEN 50
+        ELSE 30
+    END;
+
+    -- P_RGAscore 계산
+    NEW.P_RGAscore := CASE
+        WHEN NEW.P_RGArate >= 0.8 THEN 100
+        WHEN NEW.P_RGArate >= 0.6 AND NEW.P_RGArate < 0.8 THEN 90
+        WHEN NEW.P_RGArate >= 0.4 AND NEW.P_RGArate < 0.6 THEN 70
+        WHEN NEW.P_RGArate >= 0.2 AND NEW.P_RGArate < 0.4 THEN 50
+        ELSE 30
+    END;
+
+    -- P_RGDscore 계산
+    NEW.P_RGDscore := CASE
+        WHEN NEW.P_RGdist <= 1 THEN 100
+        WHEN NEW.P_RGdist BETWEEN 1 AND 2 THEN 75
+        WHEN NEW.P_RGdist BETWEEN 2 AND 3 THEN 50
+        WHEN NEW.P_RGdist BETWEEN 3 AND 4 THEN 25
+        ELSE 0
+    END;
+
+    -- P_FMscore 계산
+    NEW.P_FMscore := CASE
+        WHEN NEW.P_FMdist <= 1 THEN 100
+        WHEN NEW.P_FMdist BETWEEN 1 AND 2 THEN 75
+        WHEN NEW.P_FMdist BETWEEN 2 AND 3 THEN 50
+        WHEN NEW.P_FMdist BETWEEN 3 AND 4 THEN 25
+        ELSE 0
+    END;
+
+    -- P_Seascore 계산
+    NEW.P_Seascore := CASE
+        WHEN NEW.P_Seadist <= 1 THEN 100
+        WHEN NEW.P_Seadist BETWEEN 1 AND 2 THEN 75
+        WHEN NEW.P_Seadist BETWEEN 2 AND 3 THEN 50
+        WHEN NEW.P_Seadist BETWEEN 3 AND 4 THEN 25
+        ELSE 0
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- 각 속성값을 입력하여 SCORE값을 자동으로 계산하는 트리거
+CREATE TRIGGER calculate_polygon_scores_trigger
+BEFORE INSERT OR UPDATE ON polygon
+FOR EACH ROW
+EXECUTE FUNCTION calculate_polygon_scores();
+
+-- SCORE값의 합으로 SUM_SCORE 값을 자동으로 계산하는 트리거 함수
+CREATE OR REPLACE FUNCTION calculate_sum_scores()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- P_DV_SumScore 계산
+    NEW.P_DV_SumScore := COALESCE(NEW.P_hscore, 0) + COALESCE(NEW.P_sscore, 0) + COALESCE(NEW.P_CVscore, 0) +
+                         COALESCE(NEW.P_Dscore, 0) + COALESCE(NEW.P_pscore, 0) + COALESCE(NEW.P_Rscore, 0);
+
+    -- P_CS_sumscore 계산
+    NEW.P_CS_sumscore := COALESCE(NEW.P_Ascore, 0) + COALESCE(NEW.P_Escore, 0) + COALESCE(NEW.P_RGAscore, 0) +
+                         COALESCE(NEW.P_RGDscore, 0) + COALESCE(NEW.P_FMscore, 0) + COALESCE(NEW.P_Seascore, 0);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- SCORE값의 합으로 SUM_SCORE 값을 자동으로 계산하는 트리거
+CREATE TRIGGER calculate_sum_scores_trigger
+BEFORE INSERT OR UPDATE ON polygon
+FOR EACH ROW
+EXECUTE FUNCTION calculate_sum_scores();
+
+-- SUM_SCORE 값을 기준으로 T_SCORE 및 등급을 자동으로 계산하는 트리거 함수
+CREATE OR REPLACE FUNCTION calculate_t_score_and_grade()
+RETURNS TRIGGER AS $$
+DECLARE
+    min_T_score INT;
+    max_T_score INT;
+BEGIN
+    -- P_T_score 계산
+    NEW.P_T_score := COALESCE(NEW.P_DV_SumScore, 0) - COALESCE(NEW.P_CS_sumscore, 0);
+
+    -- 최소값과 최대값 계산
+    SELECT MIN(P_T_score), MAX(P_T_score) INTO min_T_score, max_T_score FROM polygon;
+
+    -- P_normalized_score 및 P_grade 계산
+    NEW.P_normalized_score := ROUND(CAST((NEW.P_T_score - min_T_score) AS NUMERIC) / (max_T_score - min_T_score), 3);
+    NEW.P_grade := CASE
+        WHEN NEW.P_normalized_score < 0.2 THEN '가'
+        WHEN NEW.P_normalized_score < 0.4 THEN '나'
+        WHEN NEW.P_normalized_score < 0.6 THEN '다'
+        WHEN NEW.P_normalized_score < 0.8 THEN '라'
+        ELSE '마'
+    END;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- SUM_SCORE 값을 기준으로 T_SCORE 및 등급을 자동으로 계산하는 트리거
+CREATE TRIGGER calculate_t_score_and_grade_trigger
+BEFORE INSERT OR UPDATE ON polygon
+FOR EACH ROW
+EXECUTE FUNCTION calculate_t_score_and_grade();

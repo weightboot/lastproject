@@ -869,7 +869,8 @@ SELECT
 	grade.DV_sumscore,
 	grade.CS_sumscore,
 	grade.T_score,
-	grade.grade	
+	grade.grade,
+	info.geom
 FROM 
     info
 JOIN 

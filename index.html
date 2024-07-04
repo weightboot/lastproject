@@ -143,22 +143,48 @@
   <div id="map2" style="position: relative; z-index: 1;">Selected regions: <span id="info">None</span></div>
   <!-- popup 영역 -->
   <div class="landyview landview_position">
-    <a href="" id="jspurl"><h3 id="cvs_id"></h3></a>      
+    <a href="" id="jspurl"><h3 id="id"></h3></a>      
     <ul>
       <li>PNU: <span id="pnu"></span></li>
-      <li>지번: <span id="cvs_name"></span></li>
-      <li>면적: <span id="cvs_addr_doro"></span>㎡</li>
-      <li>용도지역: <span id="cvs_addr_jibun"></span></li>
-      <li>공시지가: <span id="cvs_tel"></span>원</li>
+      <li>지번: <span id="address"></span></li>
+      <li>면적: <span id="area"></span>㎡</li>
+      <li>용도지역: <span id="youngdo"></span></li>
+      <!-- <li>공시지가: <span id="price"></span>원</li> -->
     </ul>
     <form action="./insert.jsp" method="post">
-      지표별 평가점수 입력<input type="text" id="land_score_submit" name="land_score_submit"><br>
-      특성별 적성값 입력<input type="text" id="char_score_submit" name="char_score_submit"><br>
-      종합적성값 입력<input type="text" id="total_score_submit" name="total_score_submit"><br>
+      지표별 평가점수 입력<input type="text" id="Arate" name="Arate"><br>
+      특성별 적성값 입력<input type="text" id="Erate" name="Erate"><br>
+      종합적성값 입력<input type="text" id="RGArate" name="RGArate"><br>
+      종합적성값 입력<input type="text" id="RGdist" name="RGdist"><br>
+      종합적성값 입력<input type="text" id="FMdist" name="FMdist"><br>
+      종합적성값 입력<input type="text" id="Seadist" name="Seadist"><br>
+      종합적성값 입력<input type="text" id="high" name="high"><br>
+      종합적성값 입력<input type="text" id="slant1" name="slant1"><br>
+      종합적성값 입력<input type="text" id="CVdist" name="CVdist"><br>
+      종합적성값 입력<input type="text" id="price" name="price"><br>
+      종합적성값 입력<input type="text" id="Rdist" name="Rdist"><br>
+      종합적성값 입력<input type="text" id="ddist" name="ddist"><br>
       <input type="hidden" id="sql_id" name="sql_id">
-      <input type="submit" value="저장"><br>
+      <input type="submit" value="저장">
+      <input type="submit" value="수정">
       <!-- <button id ='score_submit' type='button'>입력</button> -->
       <!-- <button id ='score_delete' type='button'>삭제</button> -->
+    </form>
+    <form action="./delete.jsp" method="post">
+      <input type="hidden" id="Arate" name="Arate" value='0'>
+      <input type="hidden" id="Erate" name="Erate" value='0'>
+      <input type="hidden" id="RGArate" name="RGArate" value='0'>
+      <input type="hidden" id="RGdist" name="RGdist" value='0'>
+      <input type="hidden" id="FMdist" name="FMdist" value='0'>
+      <input type="hidden" id="Seadist" name="Seadist" value='0'>
+      <input type="hidden" id="high" name="high" value='0'>
+      <input type="hidden" id="slant1" name="slant1" value='0'>
+      <input type="hidden" id="CVdist" name="CVdist" value='0'>
+      <input type="hidden" id="price" name="price" value='0'>
+      <input type="hidden" id="Rdist" name="Rdist" value='0'>
+      <input type="hidden" id="ddist" name="ddist" value='0'>
+      <input type="hidden" id="del_id" name="del_id">
+      <input type="submit" value="삭제">
     </form>
   </div>
 
@@ -166,7 +192,10 @@
     <button class="layer-button" id="OSM">일반지도</button>
     <button class="layer-button" id="VWorldSatellite">위성지도</button>
   </div>
-
+  <div class="button-container" style="position: relative; z-index: 1;">
+    <button class="layer-button" id="OSM">일반지도</button>
+    <button class="layer-button" id="VWorldSatellite">위성지도</button>
+  </div>
 
   <script type="module" src="./main.js"></script>
 

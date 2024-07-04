@@ -6,9 +6,9 @@
 <title>전주 편의점 상세 정보</title>
 </head>
 <body>
-<%
-    String sql_id = request.getParameter("sql_id");
-    out.println(sql_id);
+<%  
+    String del_id = request.getParameter("del_id");
+    out.println(del_id);
     String Arate = request.getParameter("Arate");
     String Erate = request.getParameter("Erate");  
     String RGArate = request.getParameter("RGArate");
@@ -21,10 +21,10 @@
     String price = request.getParameter("price");    
     String Rdist = request.getParameter("Rdist");    
     String ddist = request.getParameter("ddist");        
-    String sql_id_array [] = sql_id.split(",");
-    out.println(sql_id_array[0]);
+    String del_id_array [] = del_id.split(",");
+    out.println(del_id_array[0]);
     // out.println(land_score_submit);
-    out.println(sql_id);
+    out.println(del_id);
 %>
 <% 	// 캠핑 정보를 가져온다.
     // 접속할 DBMS 주소 		
@@ -71,56 +71,12 @@
 
         // DBMS에 쿼리할 준비를 한다.
         stmt = con.createStatement();
-        for(int i=0;i<sql_id_array.length;i++){
-            //String qryCVS = insert into land_evaluation_view(arate,Erate,RGArate,)
-
-        // String qryCVS = "update land_evaluation_view set Arate = '"+Arate+"',Erate = '"+Erate+"',RGArate ='"+RGArate+"',RGdist ='"+RGdist+"',FMdist ='"+FMdist+"',Seadist ='"+Seadist+"',high ='"+high+"',slant ='"+slant1+"',CVdist ='"+CVdist+"',price ='"+price+"',Rdist ='"+Rdist+"' where id="+sql_id_array [i];
-        // String qryCVS = "update land_evaluation_view set" +
-        // "arate = CASE WHEN "+Arate+" IS NOT NULL AND "+Arate+" <> '' THEN "+Arate+" ELSE Arate END," +
-        // "Erate = CASE WHEN '"+Erate+"' IS NOT NULL AND '"+Erate+"' <> '' THEN '"+Erate+"' ELSE Erate END," +
-        // "RGArate = CASE WHEN '"+RGArate+"' IS NOT NULL AND '"+RGArate+"' <> '' THEN '"+RGArate+"' ELSE RGArate END," +
-        // "RGdist = CASE WHEN '"+RGdist+"' IS NOT NULL AND '"+RGdist+"' <> '' THEN '"+RGdist+"' ELSE RGdist END," +
-        // "FMdist = CASE WHEN '"+FMdist+"' IS NOT NULL AND '"+FMdist+"' <> '' THEN '"+FMdist+"' ELSE FMdist END," +
-        // "Seadist = CASE WHEN '"+Seadist+"' IS NOT NULL AND '"+Seadist+"' <> '' THEN '"+Seadist+"' ELSE Seadist END," +
-        // "high = CASE WHEN '"+high+"' IS NOT NULL AND '"+high+"' <> '' THEN '"+high+"' ELSE high END," +
-        // "slant = CASE WHEN '"+slant1+"' IS NOT NULL AND '"+slant1+"' <> '' THEN '"+slant1+"' ELSE slant END," +
-        // "CVdist = CASE WHEN '"+CVdist+"' IS NOT NULL AND '"+CVdist+"' <> '' THEN '"+CVdist+"' ELSE CVdist END," +
-        // "price = CASE WHEN '"+price+"' IS NOT NULL AND '"+price+"' <> '' THEN '"+price+"' ELSE price END," +    
-        // "Rdist = CASE WHEN '"+Rdist+"' IS NOT NULL AND '"+Rdist+"' <> '' THEN '"+Rdist+"' ELSE Rdist END where id="+sql_id_array [i];
-
-        String qryCVS = "UPDATE land_evaluation_view SET " +
-
-        "Arate = CASE WHEN '"+Arate+"' IS NOT NULL AND '"+Arate+"' <> '' THEN '"+Arate+"' ELSE Arate END, " +
-
-        "Erate = CASE WHEN '"+Erate+"' IS NOT NULL AND '"+Erate+"' <> '' THEN '"+Erate+"' ELSE Erate END, " +
-
-        "RGArate = CASE WHEN '"+RGArate+"' IS NOT NULL AND '"+RGArate+"' <> '' THEN '"+RGArate+"' ELSE RGArate END, " +
-
-        "RGdist = CASE WHEN '"+RGdist+"' IS NOT NULL AND '"+RGdist+"' <> '' THEN '"+RGdist+"' ELSE RGdist END, " +
-
-        "FMdist = CASE WHEN '"+FMdist+"' IS NOT NULL AND '"+FMdist+"' <> '' THEN '"+FMdist+"' ELSE FMdist END, " +
-
-        "Seadist = CASE WHEN '"+Seadist+"' IS NOT NULL AND '"+Seadist+"' <> '' THEN '"+Seadist+"' ELSE Seadist END, " +
-
-        "high = CASE WHEN '"+high+"' IS NOT NULL AND '"+high+"' <> '' THEN '"+high+"' ELSE high END, " +
-
-        "slant = CASE WHEN '"+slant1+"' IS NOT NULL AND '"+slant1+"' <> '' THEN '"+slant1+"' ELSE slant END, " +
-
-        "CVdist = CASE WHEN '"+CVdist+"' IS NOT NULL AND '"+CVdist+"' <> '' THEN '"+CVdist+"' ELSE CVdist END, " +
-
-        "price = CASE WHEN '"+price+"' IS NOT NULL AND '"+price+"' <> '' THEN '"+price+"' ELSE price END, " +    
-
-        "Rdist = CASE WHEN '"+Rdist+"' IS NOT NULL AND '"+Rdist+"' <> '' THEN '"+Rdist+"' ELSE Rdist END, " +
-
-        "Ddist = CASE WHEN '"+ddist+"' IS NOT NULL AND '"+ddist+"' <> '' THEN '"+ddist+"' ELSE Ddist END " +
-
-        "WHERE id = " + sql_id_array[i];
-
-//문법 자체가 뭐가 틀린건데 난 안돼고 왜 다른건 되냐?
-
-
+        for(int i=0;i<del_id_array.length;i++){
+        
+        String qryCVS = "update land_evaluation_view set Arate = '"+Arate+"',Erate = '"+Erate+"',RGArate ='"+RGArate+"',RGdist ='"+RGdist+"',FMdist ='"+FMdist+"',Seadist ='"+Seadist+"',high ='"+high+"',slant ='"+slant1+"',CVdist ='"+CVdist+"',price ='"+price+"',Rdist ='"+Rdist+"',ddist ='"+ddist+"' where id="+sql_id_array [i];
+        // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.        
                 
-        // select 쿼리를 실행한다. 검색 결과가 rs에 담긴다.Ddist = CASE WHEN '"+Ddist+"' IS NOT NULL AND '"+Ddist+"' <> '' THEN '"+Ddist+"' ELSE Ddist END 임시세이브
+        // select 쿼리를 실행한다. 검색 결과가 rs에 담긴다.
         stmt.executeUpdate(qryCVS);
         }
         //값을 입력 하기 떄문에 정보를 보여주는게 필요가 없다

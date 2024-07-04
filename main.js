@@ -190,7 +190,7 @@ function WFSfiltermaker() {
     (
       {
         format: new GeoJSON(),
-        url: encodeURI(g_url + "/geoserver/donghae/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=donghae:first_data" + "&outputFormat=application/json" + "&CQL_FILTER="+getCQLfilter())
+        url: encodeURI(g_url + "/geoserver/donghae/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=donghae:land_evaluation_view" + "&outputFormat=application/json" + "&CQL_FILTER="+getCQLfilter())
       }
     );
 
@@ -228,14 +228,14 @@ wfsLayer = new VectorLayer
     // ) 
   }
 );
-// osm 레이어를 만든다.
+// osm 레이어를 만든다,지도 기본 베이스 
 const osmLayer = new TileLayer
 (
   {
     source: new OSM()
   }
 );
-
+//위성지도를 위해 v월드 위성지도 레이어를 만듬
 const vworldSatelliteLayer = new TileLayer({
   source: new XYZ({
     url: 'http://api.vworld.kr/req/wmts/1.0.0/DA3C8CB7-EA7C-3484-8234-929E0068361E/Satellite/{z}/{y}/{x}.jpeg', // VWorld Satellite 타일 URL
@@ -339,10 +339,9 @@ map.on('click', (e) =>
     //let sql_id = feature.get('sql_id'); 실제로 작동을 안할것
     let pnu = feature.get('pnu');
     let address = feature.get('address');
-    let jibun = feature.get('jibun');
     let area = feature.get('area');
     let youngdo = feature.get('youngdo');
-    let price = feature.get('price');
+    // let price = feature.get('price');
 
     //---------------------------------------------------
     // let pnu_window = feature.get('pnu');
@@ -356,17 +355,23 @@ map.on('click', (e) =>
 //     // 오버레이를 위한 div에 값들을 적는다.
     
 //     // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.
-    document.getElementById("jspurl").href = "info.jsp?cvsid="+id;
-    document.getElementById("cvs_id").innerHTML = address;
+    document.getElementById("jspurl").href = "info.jsp?id="+id;
+    if(document.getElementById("id")==null){
+    document.getElementById("id").innerHTML = '';}
+    else{
+    document.getElementById("id").innerHTML = id;}
     document.getElementById("pnu").innerHTML = pnu;
-    document.getElementById("cvs_name").innerHTML = jibun;
-    document.getElementById("cvs_addr_doro").innerHTML = area;
-    document.getElementById("cvs_addr_jibun").innerHTML = youngdo;
-    document.getElementById("cvs_tel").innerHTML = price;
+    document.getElementById("address").innerHTML = address;
+    document.getElementById("area").innerHTML = area;
+    document.getElementById("youngdo").innerHTML = youngdo;
+    // document.getElementById("price").innerHTML = price;
     //document.getElementById("sql_id").innerHTML = id;
     let name_field = document.getElementById("sql_id");
     name_field.value=id;//강제로 html id값을 변경
     //alert(id);
+    let del_field = document.getElementById("del_id");
+    del_field.value=id;//강제로 html id값을 변경
+    
 //오타를 확인하는 습관을 들이자 오타 하나때매 멀쩡히 되는 기능 안되게 개쌩쇼를함
 //---------------------------------------------------
     // document.getElementById("pnu_window").innerHTML = pnu_window;
@@ -478,6 +483,9 @@ const infoBox = document.getElementById('info');
 
 selectedFeatures.on(['add', 'remove'], function () {
   const names = selectedFeatures.getArray().map((feature) => {
+    return feature.get('address');//id값을 리턴후 jsp로 넘김을 해야하는데 이걸 보면 다른 피쳐값도 넘길수 있을거 같다 근데 방법을 찾아야됨
+  });
+  const names1 = selectedFeatures.getArray().map((feature) => {
     return feature.get('id');//id값을 리턴후 jsp로 넘김을 해야하는데 이걸 보면 다른 피쳐값도 넘길수 있을거 같다 근데 방법을 찾아야됨
   });
   if (names.length > 1) {
@@ -488,7 +496,7 @@ selectedFeatures.on(['add', 'remove'], function () {
     infoBox.innerHTML = 'None';
   }
   let name_field = document.getElementById("sql_id");
-  name_field.value=names;//강제로 html id값을 변경
+  name_field.value=names1;//강제로 html id값을 변경
 });
 
 // document.getElementById('sido01').onclick = () => {

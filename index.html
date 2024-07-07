@@ -1,16 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Using OpenLayers with Vite</title>
-  </head>
-  <body>
-    <!-- 지도 영역 -->
-     <!-- 2024.06.27 -->
 
-<!-- 현재 href 주소는 모두 #(지정하지 않음) -->
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using OpenLayers with Vite</title>
+
+  <!-- <script>
+    window.onload = function() {
+            if (!localStorage.getItem("visitedLogin")) {
+                // "visitedLogin" 항목이 없으면 login.html로 리디렉션
+                window.location.href = "./login/login.html";
+                
+            }
+          }
+          document.addEventListener("DOMContentLoaded", function() {
+            // 5초 후에 visitedLogin 키를 삭제하는 함수
+            function deleteVisitedLogin() {
+                localStorage.removeItem("visitedLogin");
+                console.log("visitedLogin key deleted from localStorage.");
+            }
+
+            // 5초 타이머 설정
+            setTimeout(deleteVisitedLogin, 3000000);
+          });
+  </script> -->
+</head>
+
+<body>
+  <script type="module" src="./main.js"></script>
+  <!-- 지도 영역 -->
+  <!-- 2024.06.27 -->
+
+  <!-- 현재 href 주소는 모두 #(지정하지 않음) -->
   <!-- header를 사용하여 윗단을 정의 -->
   <div id="header">
     <!-- 제목을 적어줄 영역을 설정 -->
@@ -24,29 +47,16 @@
           </span>
         </a>
       </div>
-    </h1>
-    <!-- 기능ㄹ을 넣어줄 영역을 설정 -->
-    <h2 class="menu-bar con-min-width">
-      <div class="con">
-        <nav class="menu-bar__menu-box-1 text-align-center">
-          <ul class="inline-grid">
-            <li><a href="#" class="block">Home</a></li>
-            <li><a href="#" class="block">Read</a></li>
-            <li><a href="#" class="block">Write</a></li>
-            <li><a href="#" class="block">About</a></li>
-            <li><a href="#" class="block">SNS</a></li>
-            <li><a href="#" class="block">Study</a></li>
-            <li><a href="#" class="block">Exit</a></li>
-          </ul>
-        </nav>
+      <div class="header-image">
+        <img src="./logo_lefttop2.png" alt="Header Image" width="300">
       </div>
-    </h2>
+    </h1>
   </div>
 
 
   <!-- 사이드 바 기능 구현 -->
   <div id="menu_bar_position" style="position: relative; z-index: 1;">
-    <aside class="side-bar" >
+    <aside class="side-bar">
       <!-- 사이드바 아이콘 만드는 영역. 기능적인 부분은 css에서 정의 -->
       <section class="side-bar__icon-box">
         <section class="side-bar__icon-1">
@@ -56,40 +66,7 @@
         </section>
       </section>
       <!-- 메뉴에 넣을 내용을 정의. 기능적인 부분은 main.js에서 정의 -->
-      <ul>
-        <li>
-          <a id="menu1" href="#"><i class="fa-solid fa-cat">제외지</i></a>
-          <ul>
-            <li><a id="sido01" href="#">주거,상업,공업지역</a></li>
-            <li><a id="sido02" href="#">보전대상 지역</a></li>
-          </ul>
-        </li>
-        <li>
-          <a id="menu2" href="#">menu2</a>
-          <ul>
-            <li><a id="induty01" href="#">경지정리면적비율</a></li>
-            <li><a id="induty02" href="#">생태,자연도 상위등급비율</a></li>
-            <li><a id="induty03" href="#">공적규제지역면적비율</a></li>
-            <li><a id="induty04" href="#">공적규제지역과의 거리</a></li>
-          </ul>
-        </li>
-        <li>
-          <a id="menu3" href="#">menu3</a>
-          <ul>
-            <li><a id="theme01" href="#">도시용지비율</a></li>
-            <li><a id="theme02" href="#">용도전용비율</a></li>
-            <li><a id="theme03" href="#">도시용지 인접비율</a></li>
-            <li><a id="theme04" href="#">지가수준</a></li>
-            <li><a id="theme05" href="#">도로와의 거리</a></li>
-            <li><a id="theme06" href="#">전,답,과수원면적비율</a></li>
-            <li><a id="theme07" href="#">농업진흥지역비율</a></li>
-            <li><a id="theme08" href="#">임상도 상위등급비율</a></li>            
-            <li><a id="theme09" href="#">보전산지비율</a></li>
-            <li><a id="theme10" href="#">경지정리지역과의 거리</a></li>
-            <li><a id="theme11" href="#">하천,호소,농업용 저수지와의 거리</a></li>
-            <li><a id="theme12" href="#">바닷가와의 거리</a></li>   
-          </ul>
-        </li>
+      <ul class="menu-list">
         <li>
           <a id="menu4" href="#">제외지</a>
           <ul>
@@ -108,19 +85,14 @@
             <li><input type="checkbox" id="slant04"><a href="#"><label for="slant04">고지</label></a><em></em></li>
           </ul>
         </li>
-        <li>
-          <a id="menu4">용도지역</a>
-        </li>
-        <li>
-          <a id="menu4">건축물 여부</a>
-        </li>
+
         <li>
           <a id="menu4">좌표계</a>
         </li>
       </ul>
     </aside>
   </div>
-   <!-- <div class="contents2">
+  <!-- <div class="contents2">
             <h3> 선택한 토지 정보</h3>
             <ul class="statues_window">
               <li>PNU 번호 : <span id="pnu_window"></span></li>
@@ -138,73 +110,148 @@
 
 
   <!-- 지도 영역  -->
-  <div id="map"></div>
-  <!-- 드래그를 통해서 선택된 영역에 대해서 나타내느 부분 -->
-  <div id="map2" style="position: relative; z-index: 1;">Selected regions: <span id="info">None</span></div>
+  <div class="map_container">
+    <div id="map"> </div>
+
+
+
+    <div class="top_box">
+      <div id="map2" class="select_regions" style="position: relative; z-index: 1;"><b>Selected Region(s): </b><span
+          id="info"></span></div>
+      <div class="row" style="position: relative; z-index: 1;">
+        <div class="col-auto">
+          <span class="input-group">
+            <label class="input-group-text" for="type"><b>Draw Area :</b></label>
+            <select class="form-select" id="type">
+              <option value="None">None</option>
+              <option value="Polygon">Polygon</option>
+            </select>
+            <input class="form-control" type="button" value="Undo" id="undo">
+          </span>
+        </div>
+      </div>
+      <div class="button-container" style="position: relative; z-index: 1;">
+        <button class="layer-button" id="OSM">일반 지도</button>
+        <button class="layer-button" id="VWorldSatellite">위성 지도</button>
+      </div>
+    </div>
+
+
+    <div class="row_box">
+      <form action="./pol_insert.jsp" class="save_polygon_button" method="post" style="position: relative; z-index: 1;">
+        <input type="hidden" id="save" name="save_name">
+        <input type="submit" id="save1" name="save_name1" value="save Polygon">
+      </form>
+    </div>
+  </div>
+
   <!-- popup 영역 -->
-  <div class="landyview landview_position">
-    <a href="" id="jspurl"><h3 id="id"></h3></a>      
-    <ul>
-      <li>PNU: <span id="pnu"></span></li>
-      <li>지번: <span id="address"></span></li>
-      <li>면적: <span id="area"></span>㎡</li>
-      <li>용도지역: <span id="youngdo"></span></li>
-      <!-- <li>공시지가: <span id="price"></span>원</li> -->
-    </ul>
-    <form action="./insert.jsp" method="post">
-      지표별 평가점수 입력<input type="text" id="Arate" name="Arate"><br>
-      특성별 적성값 입력<input type="text" id="Erate" name="Erate"><br>
-      종합적성값 입력<input type="text" id="RGArate" name="RGArate"><br>
-      종합적성값 입력<input type="text" id="RGdist" name="RGdist"><br>
-      종합적성값 입력<input type="text" id="FMdist" name="FMdist"><br>
-      종합적성값 입력<input type="text" id="Seadist" name="Seadist"><br>
-      종합적성값 입력<input type="text" id="high" name="high"><br>
-      종합적성값 입력<input type="text" id="slant1" name="slant1"><br>
-      종합적성값 입력<input type="text" id="CVdist" name="CVdist"><br>
-      종합적성값 입력<input type="text" id="price" name="price"><br>
-      종합적성값 입력<input type="text" id="Rdist" name="Rdist"><br>
-      종합적성값 입력<input type="text" id="ddist" name="ddist"><br>
-      <input type="hidden" id="sql_id" name="sql_id">
-      <input type="submit" value="저장">
-      <input type="submit" value="수정">
-      <!-- <button id ='score_submit' type='button'>입력</button> -->
-      <!-- <button id ='score_delete' type='button'>삭제</button> -->
-    </form>
-    <form action="./delete.jsp" method="post">
-      <input type="hidden" id="Arate" name="Arate" value='0'>
-      <input type="hidden" id="Erate" name="Erate" value='0'>
-      <input type="hidden" id="RGArate" name="RGArate" value='0'>
-      <input type="hidden" id="RGdist" name="RGdist" value='0'>
-      <input type="hidden" id="FMdist" name="FMdist" value='0'>
-      <input type="hidden" id="Seadist" name="Seadist" value='0'>
-      <input type="hidden" id="high" name="high" value='0'>
-      <input type="hidden" id="slant1" name="slant1" value='0'>
-      <input type="hidden" id="CVdist" name="CVdist" value='0'>
-      <input type="hidden" id="price" name="price" value='0'>
-      <input type="hidden" id="Rdist" name="Rdist" value='0'>
-      <input type="hidden" id="ddist" name="ddist" value='0'>
-      <input type="hidden" id="del_id" name="del_id">
-      <input type="submit" value="삭제">
-    </form>
+  <div class="landyview_container">
+    <div class="landyview">
+      <ul class="landyview_top">
+        <li>
+          <img class="logo-image" src="./logo.png" alt="My Image" width="350">
+        </li>
+        <li>
+          <a id="jspurl">
+            <h3 id="cvs_id"></h3>
+          </a>
+        </li>
+        <li>PNU: <span id="pnu"></span></li>
+        <li>지번: <span id="address"></span></li>
+        <li>면적: <span id="area"></span>㎡</li>
+        <li>용도지역: <span id="youngdo"></span></li>
+      </ul>
+      <form action="./insert.jsp" method="post" class="input-form">
+        <div class="form-group">
+          <label for="Arate">경지정리 면적비율</label>
+          <input type="text" id="Arate" name="Arate">
+        </div>
+        <div class="form-group">
+          <label for="Erate">상위등급 비율</label>
+          <input type="text" id="Erate" name="Erate">
+        </div>
+        <div class="form-group">
+          <label for="RGArate">공적규제 면적비율</label>
+          <input type="text" id="RGArate" name="RGArate">
+        </div>
+        <div class="form-group">
+          <label for="RGdist">공적규제 거리</label>
+          <input type="text" id="RGdist" name="RGdist">
+        </div>
+        <div class="form-group">
+          <label for="FMdist">경지정리지역과의 거리</label>
+          <input type="text" id="FMdist" name="FMdist">
+        </div>
+        <div class="form-group">
+          <label for="Seadist">바다와의 거리</label>
+          <input type="text" id="Seadist" name="Seadist">
+        </div>
+        <div class="form-group">
+          <label for="high">고도</label>
+          <input type="text" id="high" name="high">
+        </div>
+        <div class="form-group">
+          <label for="slant1">경사</label>
+          <input type="text" id="slant1" name="slant1">
+        </div>
+        <div class="form-group">
+          <label for="CVdist">공공편의시설과의 거리</label>
+          <input type="text" id="CVdist" name="CVdist">
+        </div>
+        <div class="form-group">
+          <label for="price">지가 비율</label>
+          <input type="text" id="price" name="price">
+        </div>
+        <div class="form-group">
+          <label for="Rdist">도로와의 거리</label>
+          <input type="text" id="Rdist" name="Rdist">
+        </div>
+        <div class="form-group">
+          <label for="ddist">기개발와의 거리</label>
+          <input type="text" id="ddist" name="ddist">
+        </div>
+        <input type="hidden" id="sql_id" name="sql_id">
+        <input type="hidden" id="pnu1" name="pnu1">
+        
+        <div class="form-buttons">
+          <input type="submit" value="저장">
+          <input type="submit" value="수정">
+        </div>
+      </form>
+      <!-- <script>function search_click(){
+        if(pnu==1){
+        
+        window.open("./search_view.jsp","_blank", "menubar=no, toolbar=no");}
+        else{
+          window.open("naver.com","_blank", "menubar=no, toolbar=no");
+        }id="search" onclick="search_click()"
+        }
+        </script> -->
+      <form action="./delete.jsp" method="post">
+        <input type="hidden" id="del_id" name="del_id">
+        <input type="hidden" id="pnu2" name="pnu2">
+        <div class="form-buttons">
+          <input type="submit" value="속성 삭제" >
+        </div>
+      </form>
+      <form action="./pol_delete.jsp" method="post">
+        <input type="hidden" id="p_del_id" name="p_del_id">
+        <input type="hidden" id="pnu3" name="pnu3">
+        <div class="form-buttons">
+          <input type="submit" value="폴리곤 삭제" >
+        </div>
+      </form>      
+    </div>
   </div>
 
-  <div class="button-container" style="position: relative; z-index: 1;">
-    <button class="layer-button" id="OSM">일반지도</button>
-    <button class="layer-button" id="VWorldSatellite">위성지도</button>
-  </div>
-  <div class="button-container" style="position: relative; z-index: 1;">
-    <button class="layer-button" id="OSM">일반지도</button>
-    <button class="layer-button" id="VWorldSatellite">위성지도</button>
-  </div>
-
-  <script type="module" src="./main.js"></script>
-
+  
 </body>
 
 </html>
 
-   <!-- 임시로 남겨놓을것 -->
-          <!-- <div class="contents2">
+<!-- 임시로 남겨놓을것 -->
+<!-- <div class="contents2">
             <h3> 선택한 토지 정보</h3>
             <ul class="statues_window">
               <li>PNU 번호 : <span id="pnu_window"></span></li>
@@ -218,7 +265,7 @@
               <li>종합 적성값 :<span id="total_score"></span></li>
             </ul>
           </div> -->
-          <!-- <div class="contents3">
+<!-- <div class="contents3">
             <tr>
               <th> 점수 입력창 </th>
               <td>
@@ -234,5 +281,4 @@
               </td>
             </tr>
           </div> -->
-          <!-- 임시로 남겨놓을것 -->
-          
+<!-- 임시로 남겨놓을것 -->

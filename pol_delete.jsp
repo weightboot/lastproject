@@ -9,7 +9,7 @@
 <%  
     String pnu = request.getParameter("pnu2");
 
-    String del_id = request.getParameter("p_del_id");
+    String del_id = request.getParameter("del_id");
 
      out.println(del_id);
     // String Arate = request.getParameter("Arate");

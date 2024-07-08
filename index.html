@@ -162,7 +162,7 @@
         <li>면적: <span id="area"></span>㎡</li>
         <li>용도지역: <span id="youngdo"></span></li>
       </ul>
-      <form action="./insert.jsp" method="post" class="input-form">
+      <form action="./insert.jsp" method="get" class="input-form">
         <div class="form-group">
           <label for="Arate">경지정리 면적비율</label>
           <input type="text" id="Arate" name="Arate">
@@ -213,33 +213,32 @@
         </div>
         <input type="hidden" id="sql_id" name="sql_id">
         <input type="hidden" id="pnu1" name="pnu1">
-        
+                
         <div class="form-buttons">
           <input type="submit" value="저장">
           <input type="submit" value="수정">
         </div>
       </form>
-      <!-- <script>function search_click(){
-        if(pnu==1){
-        
-        window.open("./search_view.jsp","_blank", "menubar=no, toolbar=no");}
-        else{
-          window.open("naver.com","_blank", "menubar=no, toolbar=no");
-        }id="search" onclick="search_click()"
+      <script type="text/javascript">
+        function submitForm(action) {
+            var form = document.getElementById('myForm');
+            form.action = action;
+            form.submit();
         }
-        </script> -->
-      <form action="./delete.jsp" method="post">
+    </script>
+      <form id="myForm" method="post">
         <input type="hidden" id="del_id" name="del_id">
         <input type="hidden" id="pnu2" name="pnu2">
         <div class="form-buttons">
-          <input type="submit" value="속성 삭제" >
+          <input type="submit" value="속성 삭제" onclick="submitForm('./delete.jsp')" >
+          <input type="submit" value="폴리곤 삭제" onclick="submitForm('./pol_delete.jsp')">
         </div>
       </form>
-      <form action="./pol_delete.jsp" method="post">
+      <!-- <form action="./pol_delete.jsp" method="post">
         <input type="hidden" id="p_del_id" name="p_del_id">
         <input type="hidden" id="pnu3" name="pnu3">
         <div class="form-buttons">
-          <input type="submit" value="폴리곤 삭제" >
+          <input type="submit" value="폴리곤 삭제" > -->
         </div>
       </form>      
     </div>

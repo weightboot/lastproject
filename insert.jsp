@@ -8,8 +8,15 @@
 <body>
 <%
     String pnu = request.getParameter("pnu1");//기존 객체필지랑 폴리곤으로 만든 필지의 구분을 pnu로 하고 있기 때문
-    if(pnu==null){
+    
+    out.println(pnu);
+    
+    
+    
+    if("polygons".equals(pnu)){
         String pol_id = request.getParameter("sql_id");
+        out.println(pol_id);
+        out.println(pol_id);
         out.println(pol_id);
         String p_Arate = request.getParameter("Arate");
         String p_Erate = request.getParameter("Erate");  
@@ -95,6 +102,13 @@
      
     else{
         String sql_id = request.getParameter("sql_id");
+        out.println(sql_id);
+        out.println(sql_id);
+        out.println(sql_id);
+        out.println(sql_id);
+        out.println(sql_id);
+        out.println(sql_id);
+        out.println(sql_id);
         out.println(sql_id);
         String Arate = request.getParameter("Arate");
         String Erate = request.getParameter("Erate");  
@@ -186,7 +200,7 @@
 %>
 <% 	
 
-    response.sendRedirect("index.html");
+    //response.sendRedirect("index.html");
 %>	
 <%-- <script>
 alert("저장 성공!");

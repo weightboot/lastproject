@@ -27,7 +27,7 @@
     
 %>
 <% 	
-    if(pnu!=null)
+    if("polygons".equals(pnu))
 {
 
     // 접속할 DBMS 주소 		
@@ -54,7 +54,7 @@
         // DBMS와 연결한다. url: 접속할 서버. user: DBMS 사용자 계정, pwd: user의 비밀번호
         con = DriverManager.getConnection(url, user, pwd);
         
-
+ 
 
         // ////----- cvshop 테이블의 전체 데이터 갯수를 가져온다. -----/////
         // Statement stmt_count = con.createStatement();        
@@ -76,7 +76,7 @@
         stmt = con.createStatement();
         for(int i=0;i<del_id_array.length;i++){
         
-        String qryCVS = "update land_evaluation_view set Arate = null,Erate = null,RGArate = null,RGdist = null,FMdist = null,Seadist = null,high = null,slant = null,CVdist = null,price = null,Rdist = null,ddist = null where id="+del_id_array [i];
+        String qryCVS = "update polygon set p_Arate = null,p_Erate = null,p_RGArate = null,p_RGdist = null,p_FMdist = null,p_Seadist = null,p_high = null,p_slant = null,p_CVdist = null,p_price = null,p_Rdist = null,p_ddist = null where id="+del_id_array [i];     
 
         // String qryCVS = "update land_evaluation_view set Arate = "+Arate+",Erate = "+Erate+",RGArate ="+RGArate+",RGdist ="+RGdist+",FMdist ="+FMdist+",Seadist ="+Seadist+",high ="+high+",slant ="+slant1+",CVdist ="+CVdist+",price ="+price+",Rdist ="+Rdist+",ddist ="+ddist+" where id="+sql_id_array [i];
         // 여기가 답 자리. 이 줄을 지우고 답을 적으세요.        
@@ -145,8 +145,8 @@ else{
         stmt = con.createStatement();
         for(int i=0;i<del_id_array.length;i++){
         
-        String qryCVS = "update polygon set p_Arate = null,p_Erate = null,p_RGArate = null,p_RGdist = null,p_FMdist = null,p_Seadist = null,p_high = null,p_slant = null,p_CVdist = null,p_price = null,p_Rdist = null,p_ddist = null where id="+del_id_array [i];
-
+        String qryCVS = "update land_evaluation_view set Arate = null,Erate = null,RGArate = null,RGdist = null,FMdist = null,Seadist = null,high = null,slant = null,CVdist = null,price = null,Rdist = null,ddist = null where id="+del_id_array [i];
+        
         // String qryCVS = "update land_evaluation_view set Arate = "+Arate+",Erate = "+Erate+",RGArate ="+RGArate+",RGdist ="+RGdist+",FMdist ="+FMdist+",Seadist ="+Seadist+",high ="+high+",slant ="+slant1+",CVdist ="+CVdist+",price ="+price+",Rdist ="+Rdist+",ddist ="+ddist+" where id="+sql_id_array [i];
                 
         // select 쿼리를 실행한다. 검색 결과가 rs에 담긴다.
@@ -166,7 +166,7 @@ else{
     }
 
 }
-    response.sendRedirect("index.html");
+    //response.sendRedirect("index.html");
 %>	
 <%-- <script>
 alert("저장 성공!");

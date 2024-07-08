@@ -28,13 +28,8 @@
     
 %>
 <% 	
-    if(pnu!=null)
+    if("polygons".equals(pnu))
 {
-    out.println("<script>alert('삭제 할 수 없습니다!');</script>");
-
-}
-
-else{
     // 접속할 DBMS 주소 		
     String url = "jdbc:postgresql://172.30.0.7/donghae";
     
@@ -82,7 +77,12 @@ else{
     }
 
 }
-   response.sendRedirect("index.html");
+
+else{
+    out.println("<script>alert('삭제 할 수 없습니다!');</script>");
+
+}
+   //response.sendRedirect("index.html");
 %>	
 <%-- <script>
 alert("저장 성공!");

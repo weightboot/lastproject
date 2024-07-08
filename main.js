@@ -447,7 +447,7 @@ map.on('click', (e) =>
     //let jibun = feature.get('jibun');
     let area = feature.get('area');
     let youngdo = feature.get('youngdo');
-
+    
     //---------------------------------------------------
     // let pnu_window = feature.get('pnu');
     // let address_window = feature.get('address');
@@ -467,18 +467,32 @@ map.on('click', (e) =>
     document.getElementById("area").innerHTML = area;
     document.getElementById("youngdo").innerHTML = youngdo;
     document.getElementById("cvs_id").innerHTML = id;
+
+    let ins = document.getElementById("pnu1");
+    let del = document.getElementById("pnu2");
+    
+    if(address===undefined){
+      ins.value="polygons";//강제로 html id값을 변경
+      console.log(ins.value);
+      del.value="polygons";//강제로 html id값을 변경
+      
+    }
+    else{
+      ins.value=address;//강제로 html id값을 변경
+      console.log(ins.value);
+      del.value=address;//강제로 html id값을 변경
+      
+    }
+
     let name_field = document.getElementById("sql_id");
     name_field.value=id;//강제로 html id값을 변경
+            
     let del_field = document.getElementById("del_id");
     del_field.value=id;//강제로 html id값을 변경
-    let pnu_field = document.getElementById("pnu1");
-    pnu_field.value=pnu;//강제로 html id값을 변경
-    let del = document.getElementById("pnu2");
-    del.value=pnu;//강제로 html id값을 변경
-    let pol_del = document.getElementById("pnu3");
-    pol_del.value=pnu;//강제로 html id값을 변경
-    let pol_del_id = document.getElementById("p_del_id");
-    pol_del_id.value=id;//강제로 html id값을 변경
+    
+    // let pol_del_id = document.getElementById("p_del_id");
+    // pol_del_id.value=id;//강제로 html id값을 변경
+    
     //alert(id);
 //오타를 확인하는 습관을 들이자 오타 하나때매 멀쩡히 되는 기능 안되게 개쌩쇼를함
 //---------------------------------------------------
@@ -505,14 +519,7 @@ map.on('click', (e) =>
 }
 );
 
-function search_click(){
-  if(pnu==null){
-  
-  window.open("./search_view.jsp","_blank", "menubar=no, toolbar=no");}
-  else{
-    window.open("naver.com","_blank", "menubar=no, toolbar=no");
-  }
-  }
+
     
 const selectedStyle = new Style({//마우스 드래그로 선택하면 나타나는 안색상과 겉에선 스타일 정의 근데 왜 이렇게 귀찮게 하는지 모르겠다 걍 파라메터 써넣을것이지 왜 궂이 정의하고
   fill: new Fill({

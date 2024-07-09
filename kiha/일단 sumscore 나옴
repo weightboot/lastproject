@@ -798,7 +798,8 @@ BEGIN
     SET 
         dv_sumscore = (SELECT DV_SumScore FROM Development_Suitability WHERE pnu = NEW.pnu),
         cs_sumscore = (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu),
-        T_score = (SELECT DV_SumScore FROM Development_Suitability WHERE pnu = NEW.pnu) - (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu)
+        T_score = (SELECT DV_SumScore FROM Development_Suitability WHERE pnu = NEW.pnu) 
+			- (SELECT CS_sumscore FROM Conservation_Suitability WHERE pnu = NEW.pnu)
     WHERE pnu = NEW.pnu;
 
     -- 최소값과 최대값 계산

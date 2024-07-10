@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using OpenLayers with Vite</title>
+
+  <script>
+    window.onload = function () {
+      if (!localStorage.getItem("visitedLogin")) {
+        // "visitedLogin" 항목이 없으면 login.html로 리디렉션
+        window.location.href = "./login/login.html";
+
+      }
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+      // 5초 후에 visitedLogin 키를 삭제하는 함수
+      function deleteVisitedLogin() {
+        localStorage.removeItem("visitedLogin");
+        console.log("visitedLogin key deleted from localStorage.");
+      }
+
+      // 5초 타이머 설정
+      setTimeout(deleteVisitedLogin, 600000);
+    });
+  </script>
+  <script type="module" crossorigin src="./assets/index-BYXrNIOG.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-CXE6SuBR.css">
+</head>
+
+<body>
+  <!-- 지도 영역 -->
+  <!-- 2024.06.27 -->
+
+  <!-- 현재 href 주소는 모두 #(지정하지 않음) -->
+  <!-- header를 사용하여 윗단을 정의 -->
+  <div id="header">
+    <!-- 제목을 적어줄 영역을 설정 -->
+    <h1 class="logo-bar con-min-width">
+      <div class="text-align-center con">
+        <a href="#" class="logo-bar__logo">
+          <span class="ico-1"><i class="fa-solid fa-plane"></i></span>
+          <span>
+            <span>토지</span><span>적성</span><span>평가</span>
+          </span>
+        </a>
+      </div>
+      <div class="header-image">
+        <img src="data:image/png;base64,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" alt="Header Image" width="280">
+      </div>
+    </h1>
+  </div>
+
+
+
+
+  <!-- <div class="contents2">
+            <h3> 선택한 토지 정보</h3>
+            <ul class="statues_window">
+              <li>PNU 번호 : <span id="pnu_window"></span></li>
+              <li>주소 :<span id="address_window"></span></li>
+              <li>지번 :<span id="jibun_window"></span></li>
+              <li>면적 :<span id="area_window"></span></li>
+              <li>용도지역 :<span id="youngdo_window"></span></li>
+              <li>공시지가 :<span id="price_window"></span></li>
+              <li>지표별 평가점수 :<span id="land_score"></span></li>
+              <li>특성별 적성값 :<span id="char_score"></span></li>
+              <li>종합 적성값 :<span id="total_score"></span></li>
+            </ul>
+          </div> -->
+
+
+
+  <!-- 지도 영역  -->
+
+  <div id="map_container">
+    <div id="map"> </div>
+
+    <div style="position: relative; z-index: 1;">
+      <div class="top_box">
+        <div id="map2" class="select_regions"><b>Selected Region(s): </b><span id="info"></span></div>
+        <div class="row">
+          <div class="col-auto">
+            <span class="input-group">
+              <label class="input-group-text" for="type"><b>Draw Area :</b></label>
+              <select class="form-select" id="type">
+                <option value="None">None</option>
+                <option value="Polygon">Polygon</option>
+              </select>
+              <input class="form-control" type="button" value="Undo" id="undo">
+            </span>
+          </div>
+        </div>
+        <div class="button-container">
+          <button class="layer-button" id="OSM">일반 지도</button>
+          <button class="layer-button" id="VWorldSatellite">위성 지도</button>
+        </div>
+      </div>
+
+      <div class="row_box">
+        <form action="./pol_insert.jsp" class="save_polygon_button" method="post">
+          <input type="hidden" id="save" name="save_name">
+          <input type="submit" id="save1" name="save_name1" value="save Polygon">
+        </form>
+      </div>
+
+
+
+
+      <div id="menu_bar_position">
+        <aside class="side-bar">
+          <!-- 사이드바 아이콘 만드는 영역. 기능적인 부분은 css에서 정의 -->
+          <section class="side-bar__icon-box">
+            <section class="side-bar__icon-1">
+              <div></div>
+              <div></div>
+              <div></div>
+            </section>
+          </section>
+          <!-- 메뉴에 넣을 내용을 정의. 기능적인 부분은 main.js에서 정의 -->
+          <ul class="menu-list">
+            <li>
+              <a id="menu4" href="#">제외지</a>
+              <ul>
+                <li><input type="checkbox" id="exclude01"><a href="#"><label for="exclude01">주거지역</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="exclude02"><a href="#"><label for="exclude02"><em></em>상업지역</label></a>
+                </li>
+                <li><input type="checkbox" id="exclude03"><a href="#"><label for="exclude03"><em></em>공업지역</label></a>
+                </li>
+                <li><input type="checkbox" id="exclude04"><a href="#"><label for="exclude04"><em></em>한번에</label></a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a id="menu4">종합적성값</a>
+              <ul>
+                <li><input type="checkbox" id="grade01"><a href="#"><label for="grade01">종합값 : 가</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="grade02"><a href="#"><label for="grade02">종합값 : 나</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="grade03"><a href="#"><label for="grade03">종합값 : 다</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="grade04"><a href="#"><label for="grade04">종합값 : 라</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="grade05"><a href="#"><label for="grade05">종합값 : 마</label></a><em></em>
+                </li>
+              </ul>
+            </li>
+            <!-- <li>
+              <a id="menu5">경사도</a>
+              <ul>
+                <li><input type="checkbox" id="slant01"><a href="#"><label for="slant01">평지,저지</label></a><em></em></li>
+                <li><input type="checkbox" id="slant02"><a href="#"><label for="slant02">완경사</label></a><em></em></li>
+                <li><input type="checkbox" id="slant03"><a href="#"><label for="slant03">급경사</label></a><em></em></li>
+                <li><input type="checkbox" id="slant04"><a href="#"><label for="slant04">고지</label></a><em></em></li>
+              </ul>
+            </li> -->
+
+
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div class="side-bar-right">
+
+    <img class="logo-image" src="./assets/logo-zUdH9TyP.png" alt="My Image" width="350">
+    <form action="./insert.jsp" method="post" class="input-form" id="insert_form">
+      <h3 style="text-align: center;">개발적성</h3>
+      <div class="form-group">
+        <label for="slant1">경사도</label>
+        <input type="text" id="slant1" name="slant1">
+      </div>
+      <div class="form-group">
+        <label for="high">표고</label>
+        <input type="text" id="high" name="high">
+      </div>
+      <div class="form-group">
+        <label for="ddist">기개발지 거리</label>
+        <input type="text" id="ddist" name="ddist">
+      </div>
+
+      <div class="form-group">
+        <label for="CVdist">공공편의시설 거리</label>
+        <input type="text" id="CVdist" name="CVdist">
+      </div>
+      <div class="form-group">
+        <label for="price">지가 비율</label>
+        <input type="text" id="price" name="price">
+      </div>
+      <div class="form-group">
+        <label for="Rdist">도로와의 거리</label>
+        <input type="text" id="Rdist" name="Rdist">
+      </div>
+      <h3 style="text-align: center;">보전적성</h3>
+
+      <div class="form-group">
+        <label for="Arate">경지정리 면적비율</label>
+        <input type="text" id="Arate" name="Arate">
+      </div>
+      <div class="form-group">
+        <label for="Erate">상위등급 비율</label>
+        <input type="text" id="Erate" name="Erate">
+      </div>
+      <div class="form-group">
+        <label for="RGArate">공적규제 면적비율</label>
+        <input type="text" id="RGArate" name="RGArate">
+      </div>
+      <div class="form-group">
+        <label for="RGdist">공적규제 거리</label>
+        <input type="text" id="RGdist" name="RGdist">
+      </div>
+      <div class="form-group">
+        <label for="FMdist">경지정리지역과의 거리</label>
+        <input type="text" id="FMdist" name="FMdist">
+      </div>
+      <div class="form-group">
+        <label for="Seadist">바다와의 거리</label>
+        <input type="text" id="Seadist" name="Seadist">
+      </div>
+      <input type="hidden" id="sql_id" name="sql_id">
+      <input type="hidden" id="pnu1" name="pnu1">
+      <div class="form-buttons" id="form-buttons_first">
+        <input type="submit" value="저장">
+        <input type="submit" value="수정">
+      </div>
+    </form>
+    <script type="text/javascript">
+      function submitForm(action) {
+        var form = document.getElementById('myForm');
+        form.action = action;
+        form.submit();
+      }
+    </script>
+    <form id="myForm" method="post">
+      <input type="hidden" id="del_id" name="del_id">
+      <input type="hidden" id="pnu2" name="pnu2">
+      <div class="form-buttons">
+        <input type="submit" value="속성 삭제" onclick="submitForm('./delete.jsp')">
+        <input type="submit" value="폴리곤 삭제" onclick="submitForm('./pol_delete.jsp')">
+      </div>
+    </form>
+  </div>
+
+  <!-- popup 영역 -->
+  <div class="landyview" id="landyview_id">
+    <ul class="landyview_top" id="landyview_top">
+      <li>
+        <a id="jspurl">
+          <h3 id="address"></h3>
+        </a>
+      </li>
+      <li ><b>PNU: </b><span id="pnu"></span></li>
+      <li ><b>ID: </b><span id="cvs_id"></span></li>
+      <li ><b>면적:</b> <span id="area"></span>㎡</li>
+      <li ><b>용도지역:</b> <span id="youngdo"></span></li>
+      <li ><b>경사도:</b> <span id="slant1_display"></span></li>
+      <li ><b>표고: </b> <span id="high_display"></span></li>
+      <li ><b>기개발지 거리: </b><span id="ddist_display"></span></li>
+      <li ><b>공공편익시설 거리:</b> <span id="CVdist_display"></span></li>
+      <li ><b>지가 비율:</b> <span id="price_display"></span></li>
+      <li ><b>도로와의 거리:</b> <span id="Rdist_display"></span></li>
+      <li ><b>경지정리 면적비율:</b> <span id="Arate_display"></span></li>
+      <li ><b>상위등급 비율:</b> <span id="Erate_display"></span></li>
+      <li ><b>공적규제 면적비율: </b><span id="RGArate_display"></span></li>
+      <li ><b>공적규제 거리:</b> <span id="RGdist_display"></span></li>
+      <li ><b>경지정리지역과의 거리:</b> <span id="FMdist_display"></span></li>
+      <li ><b>바다와의 거리: </b> <span id="Seadist_display"></span></li>
+      <li ><b>개발적성값 : </b> <span id="dv_sumsocre_display"></span></li>
+      <li ><b>보전적성값 : </b> <span id="cs_sumsocre_display"></span></li>
+      <li ><b>종합적성값(score) : </b> <span id="t_socre_display"></span></li>
+      <li ><b>종합적성값(가 - 마) : </b> <span id="grade_display"></span></li>
+    </ul>
+    <ul class="landyview_bottom" id="landyview_bottom">
+      <li ><b>경사도:</b> <span id="p_slant1_display"></span></li>
+      <li ><b>표고: </b>  <span id="p_high_display"></span></li>
+      <li ><b>기개발지 거리: </b> <span id="p_ddist_display"></span></li>
+      <li ><b>공공편익시설 거리:</b> <span id="p_CVdist_display"></span></li>
+      <li ><b>지가 비율:</b><span id="p_price_display"></span></li>
+      <li ><b>도로와의 거리:</b> <span id="p_Rdist_display"></span></li>
+      <li ><b>경지정리 면적비율:</b> <span id="p_Arate_display"></span></li>
+      <li ><b>상위등급 비율:</b> <span id="p_Erate_display"></span></li>
+      <li ><b>공적규제 면적비율:  </b><span id="p_RGArate_display"></span></li>
+      <li ><b>공적규제 면적비율:</b> <span id="p_RGdist_display"></span></li>
+      <li ><b>경지정리지역과의 거리:</b><span id="p_FMdist_display"></span></li>
+      <li ><b>바다와의 거리: </b> <span id="p_Seadist_display"></span></li>
+      <li ><b>개발적성값 : </b> <span id="p_dv_sumsocre_display"></span></li>
+      <li ><b>보전적성값 : </b> <span id="p_cs_sumsocre_display"></span></li>
+      <li ><b>종합적성값(score) : </b> <span id="p_t_socre_display"></span></li>
+      <li ><b>종합적성값(가 - 마) : </b> <span id="p_grade_display"></span></li>
+    </ul>
+  </div>
+
+
+
+
+
+
+
+
+  <!-- 사이드 바 기능 구현 -->
+
+
+</body>
+
+</html>
+
+<!-- 임시로 남겨놓을것 -->
+<!-- <div class="contents2">
+            <h3> 선택한 토지 정보</h3>
+            <ul class="statues_window">
+              <li>PNU 번호 : <span id="pnu_window"></span></li>
+              <li>주소 :<span id="address_window"></span></li>
+              <li>지번 :<span id="jibun_window"></span></li>
+              <li>면적 :<span id="area_window"></span></li>
+              <li>용도지역 :<span id="youngdo_window"></span></li>
+              <li>공시지가 :<span id="price_window"></span></li>
+              <li>지표별 평가점수 :<span id="land_score"></span></li>
+              <li>특성별 적성값 :<span id="char_score"></span></li>
+              <li>종합 적성값 :<span id="total_score"></span></li>
+            </ul>
+          </div> -->
+<!-- <div class="contents3">
+            <tr>
+              <th> 점수 입력창 </th>
+              <td>
+                <br>
+              <form action="./insert.jsp">
+                지표별 평가점수 입력<input type="text" id="land_score_submit"><br>
+                특성별 적성값 입력<input type="text" id="char_score_submit"><br>
+                종합적성값 입력<input type="text" id="total_score_submit"><br>
+                <input type="submit" id="score_submit" value="저장"><br>
+                <button id ='score_submit' type='button'>입력</button>
+                <button id ='score_delete' type='button'>삭제</button>
+              </form>
+              </td>
+            </tr>
+          </div> -->
+<!-- 임시로 남겨놓을것 -->

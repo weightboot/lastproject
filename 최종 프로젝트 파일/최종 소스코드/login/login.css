@@ -1,0 +1,99 @@
+/* OpenLayers CSS 파일을 가져온다 */
+@import "node_modules/ol/ol.css";
+
+/* 모든 엘리먼트에 기본 패딩, 마진, 테두리를 제거한다 */
+*{
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+/* body 태그의 기본 글꼴 크기와 글꼴을 설정한다 */
+body{
+  font-size: 14px;
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0;
+}
+
+/* 로그인 래퍼의 크기와 내부 패딩을 설정하고 박스 크기 방식을 지정한다 */
+.login-wrapper {
+  width: 400px;
+  padding: 40px;
+  box-sizing: border-box;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+
+}
+
+/* 로그인 래퍼 내의 h2 요소 스타일을 지정한다 */
+.login-wrapper > h2{
+  font-size: 24px;
+  color: #6A24FE;
+  margin-bottom: 20px;
+}
+
+
+/* 로그인 폼의 input 요소 스타일을 지정한다 */
+#login-form > input{
+  width: 100%;
+  height: 48px;
+  padding: 0 10px;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+  border-radius: 6px;
+  background-color: #F8F8F8;
+}
+
+/* input 요소의 placeholder 텍스트 색상을 지정한다 */
+#login-form > input::placeholder{
+  color: #D2D2D2;
+}
+
+/* input 요소에 포커스가 있을 때 테두리 색상을 변경한다 */
+#login-form > input:focus {
+  border-color: #6A24FE;
+}
+
+/* type이 submit인 input 요소의 텍스트 색상, 배경 색상 등을 지정한다 */
+#login-form > input[type="submit"]{
+  color: #fff;
+  font-size: 16px;
+  background-color: #6A24FE;
+  margin-top: 20px;
+}
+
+/* type이 checkbox인 input 요소를 숨긴다 */
+#login-form > input[type="checkbox"]{
+  display: none;
+}
+
+/* login-form 내 label 요소의 텍스트 색상을 지정한다 */
+#login-form > label{
+  color: #999999;
+}
+
+/* 로그인 버튼에 호버 효과를 추가한다 */
+#login-form > input[type="submit"]:hover {
+  background-color: #5922cc;
+}
+
+/* 체크박스 input 요소와 다음에 오는 label 요소의 스타일을 지정한다 */
+#login-form input[type="checkbox"] + label{
+  cursor: pointer;
+  padding-left: 26px;
+  background-image: url("checkbox.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* 체크박스가 체크되었을 때의 label 요소 스타일을 지정한다 */
+#login-form input[type="checkbox"]:checked + label{
+  background-image: url("checkbox-active.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+}

@@ -990,7 +990,14 @@ BEGIN
         SET Rdist = NEW.Rdist
         WHERE pnu = NEW.pnu;
     END IF;
-    
+
+-- Update develop
+IF NEW.Ddist IS DISTINCT FROM OLD.Ddist THEN
+    UPDATE develop
+    SET Ddist = NEW.Ddist
+    WHERE pnu = NEW.pnu;
+END IF;
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

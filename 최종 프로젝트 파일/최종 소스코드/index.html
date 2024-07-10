@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="https://openlayers.org/favicon.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using OpenLayers with Vite</title>
+
+  <script>
+    window.onload = function () {
+      if (!localStorage.getItem("visitedLogin")) {
+        // "visitedLogin" 항목이 없으면 login.html로 리디렉션
+        window.location.href = "./login/login.html";
+
+      }
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+      // 5초 후에 visitedLogin 키를 삭제하는 함수
+      function deleteVisitedLogin() {
+        localStorage.removeItem("visitedLogin");
+        console.log("visitedLogin key deleted from localStorage.");
+      }
+
+      // 5초 타이머 설정
+      setTimeout(deleteVisitedLogin, 600000);
+    });
+  </script>
+</head>
+
+<body>
+  <!-- 지도 영역 -->
+  <!-- 2024.06.27 -->
+
+  <!-- 현재 href 주소는 모두 #(지정하지 않음) -->
+  <!-- header를 사용하여 윗단을 정의 -->
+  <div id="header">
+    <!-- 제목을 적어줄 영역을 설정 -->
+    <h1 class="logo-bar con-min-width">
+      <div class="text-align-center con">
+        <a href="#" class="logo-bar__logo">
+          <span class="ico-1"><i class="fa-solid fa-plane"></i></span>
+          <span>
+            <span>토지</span><span>적성</span><span>평가</span>
+          </span>
+        </a>
+      </div>
+      <div class="header-image">
+        <img src="./logo_lefttop2.png" alt="Header Image" width="280">
+      </div>
+    </h1>
+  </div>
+
+
+
+
+  <!-- <div class="contents2">
+            <h3> 선택한 토지 정보</h3>
+            <ul class="statues_window">
+              <li>PNU 번호 : <span id="pnu_window"></span></li>
+              <li>주소 :<span id="address_window"></span></li>
+              <li>지번 :<span id="jibun_window"></span></li>
+              <li>면적 :<span id="area_window"></span></li>
+              <li>용도지역 :<span id="youngdo_window"></span></li>
+              <li>공시지가 :<span id="price_window"></span></li>
+              <li>지표별 평가점수 :<span id="land_score"></span></li>
+              <li>특성별 적성값 :<span id="char_score"></span></li>
+              <li>종합 적성값 :<span id="total_score"></span></li>
+            </ul>
+          </div> -->
+
+
+
+  <!-- 지도 영역  -->
+
+  <div id="map_container">
+    <div id="map"> </div>
+
+    <div style="position: relative; z-index: 1;">
+      <div class="top_box">
+        <div id="map2" class="select_regions"><b>Selected Region(s): </b><span id="info"></span></div>
+        <div class="row">
+          <div class="col-auto">
+            <span class="input-group">
+              <label class="input-group-text" for="type"><b>Draw Area :</b></label>
+              <select class="form-select" id="type">
+                <option value="None">None</option>
+                <option value="Polygon">Polygon</option>
+              </select>
+              <input class="form-control" type="button" value="Undo" id="undo">
+            </span>
+          </div>
+        </div>
+        <div class="button-container">
+          <button class="layer-button" id="OSM">일반 지도</button>
+          <button class="layer-button" id="VWorldSatellite">위성 지도</button>
+        </div>
+      </div>
+
+      <div class="row_box">
+        <form action="./pol_insert.jsp" class="save_polygon_button" method="post">
+          <input type="hidden" id="save" name="save_name">
+          <input type="submit" id="save1" name="save_name1" value="save Polygon">
+        </form>
+      </div>
+
+
+
+
+      <div id="menu_bar_position">
+        <aside class="side-bar">
+          <!-- 사이드바 아이콘 만드는 영역. 기능적인 부분은 css에서 정의 -->
+          <section class="side-bar__icon-box">
+            <section class="side-bar__icon-1">
+              <div></div>
+              <div></div>
+              <div></div>
+            </section>
+          </section>
+          <!-- 메뉴에 넣을 내용을 정의. 기능적인 부분은 main.js에서 정의 -->
+          <ul class="menu-list">
+            <li>
+              <a id="menu4" href="#">제외지</a>
+              <ul>
+                <li><input type="checkbox" id="exclude01"><a href="#"><label for="exclude01">주거지역</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="exclude02"><a href="#"><label for="exclude02"><em></em>상업지역</label></a>
+                </li>
+                <li><input type="checkbox" id="exclude03"><a href="#"><label for="exclude03"><em></em>공업지역</label></a>
+                </li>
+                <li><input type="checkbox" id="exclude04"><a href="#"><label for="exclude04"><em></em>한번에</label></a>
+                </li>
+              </ul>
+            </li>
+            <li>
+              <a id="menu4">종합적성값</a>
+              <ul>
+                <li><input type="checkbox" id="grade01"><a href="#"><label for="grade01">종합값 : 가</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="grade02"><a href="#"><label for="grade02">종합값 : 나</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="grade03"><a href="#"><label for="grade03">종합값 : 다</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="grade04"><a href="#"><label for="grade04">종합값 : 라</label></a><em></em>
+                </li>
+                <li><input type="checkbox" id="grade05"><a href="#"><label for="grade05">종합값 : 마</label></a><em></em>
+                </li>
+              </ul>
+            </li>
+            <!-- <li>
+              <a id="menu5">경사도</a>
+              <ul>
+                <li><input type="checkbox" id="slant01"><a href="#"><label for="slant01">평지,저지</label></a><em></em></li>
+                <li><input type="checkbox" id="slant02"><a href="#"><label for="slant02">완경사</label></a><em></em></li>
+                <li><input type="checkbox" id="slant03"><a href="#"><label for="slant03">급경사</label></a><em></em></li>
+                <li><input type="checkbox" id="slant04"><a href="#"><label for="slant04">고지</label></a><em></em></li>
+              </ul>
+            </li> -->
+
+
+          </ul>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <div class="side-bar-right">
+
+    <img class="logo-image" src="./logo.png" alt="My Image" width="350">
+    <form action="./insert.jsp" method="post" class="input-form" id="insert_form">
+      <h3 style="text-align: center;">개발적성</h3>
+      <div class="form-group">
+        <label for="slant1">경사도</label>
+        <input type="text" id="slant1" name="slant1">
+      </div>
+      <div class="form-group">
+        <label for="high">표고</label>
+        <input type="text" id="high" name="high">
+      </div>
+      <div class="form-group">
+        <label for="ddist">기개발지 거리</label>
+        <input type="text" id="ddist" name="ddist">
+      </div>
+
+      <div class="form-group">
+        <label for="CVdist">공공편의시설 거리</label>
+        <input type="text" id="CVdist" name="CVdist">
+      </div>
+      <div class="form-group">
+        <label for="price">지가 비율</label>
+        <input type="text" id="price" name="price">
+      </div>
+      <div class="form-group">
+        <label for="Rdist">도로와의 거리</label>
+        <input type="text" id="Rdist" name="Rdist">
+      </div>
+      <h3 style="text-align: center;">보전적성</h3>
+
+      <div class="form-group">
+        <label for="Arate">경지정리 면적비율</label>
+        <input type="text" id="Arate" name="Arate">
+      </div>
+      <div class="form-group">
+        <label for="Erate">상위등급 비율</label>
+        <input type="text" id="Erate" name="Erate">
+      </div>
+      <div class="form-group">
+        <label for="RGArate">공적규제 면적비율</label>
+        <input type="text" id="RGArate" name="RGArate">
+      </div>
+      <div class="form-group">
+        <label for="RGdist">공적규제 거리</label>
+        <input type="text" id="RGdist" name="RGdist">
+      </div>
+      <div class="form-group">
+        <label for="FMdist">경지정리지역과의 거리</label>
+        <input type="text" id="FMdist" name="FMdist">
+      </div>
+      <div class="form-group">
+        <label for="Seadist">바다와의 거리</label>
+        <input type="text" id="Seadist" name="Seadist">
+      </div>
+      <input type="hidden" id="sql_id" name="sql_id">
+      <input type="hidden" id="pnu1" name="pnu1">
+      <div class="form-buttons" id="form-buttons_first">
+        <input type="submit" value="저장">
+        <input type="submit" value="수정">
+      </div>
+    </form>
+    <script type="text/javascript">
+      function submitForm(action) {
+        var form = document.getElementById('myForm');
+        form.action = action;
+        form.submit();
+      }
+    </script>
+    <form id="myForm" method="post">
+      <input type="hidden" id="del_id" name="del_id">
+      <input type="hidden" id="pnu2" name="pnu2">
+      <div class="form-buttons">
+        <input type="submit" value="속성 삭제" onclick="submitForm('./delete.jsp')">
+        <input type="submit" value="폴리곤 삭제" onclick="submitForm('./pol_delete.jsp')">
+      </div>
+    </form>
+  </div>
+
+  <!-- popup 영역 -->
+  <div class="landyview" id="landyview_id">
+    <ul class="landyview_top" id="landyview_top">
+      <li>
+        <a id="jspurl">
+          <h3 id="address"></h3>
+        </a>
+      </li>
+      <li ><b>PNU: </b><span id="pnu"></span></li>
+      <li ><b>ID: </b><span id="cvs_id"></span></li>
+      <li ><b>면적:</b> <span id="area"></span>㎡</li>
+      <li ><b>용도지역:</b> <span id="youngdo"></span></li>
+      <li ><b>경사도:</b> <span id="slant1_display"></span></li>
+      <li ><b>표고: </b> <span id="high_display"></span></li>
+      <li ><b>기개발지 거리: </b><span id="ddist_display"></span></li>
+      <li ><b>공공편익시설 거리:</b> <span id="CVdist_display"></span></li>
+      <li ><b>지가 비율:</b> <span id="price_display"></span></li>
+      <li ><b>도로와의 거리:</b> <span id="Rdist_display"></span></li>
+      <li ><b>경지정리 면적비율:</b> <span id="Arate_display"></span></li>
+      <li ><b>상위등급 비율:</b> <span id="Erate_display"></span></li>
+      <li ><b>공적규제 면적비율: </b><span id="RGArate_display"></span></li>
+      <li ><b>공적규제 거리:</b> <span id="RGdist_display"></span></li>
+      <li ><b>경지정리지역과의 거리:</b> <span id="FMdist_display"></span></li>
+      <li ><b>바다와의 거리: </b> <span id="Seadist_display"></span></li>
+      <li ><b>개발적성값 : </b> <span id="dv_sumsocre_display"></span></li>
+      <li ><b>보전적성값 : </b> <span id="cs_sumsocre_display"></span></li>
+      <li ><b>종합적성값(score) : </b> <span id="t_socre_display"></span></li>
+      <li ><b>종합적성값(가 - 마) : </b> <span id="grade_display"></span></li>
+    </ul>
+    <ul class="landyview_bottom" id="landyview_bottom">
+      <li ><b>경사도:</b> <span id="p_slant1_display"></span></li>
+      <li ><b>표고: </b>  <span id="p_high_display"></span></li>
+      <li ><b>기개발지 거리: </b> <span id="p_ddist_display"></span></li>
+      <li ><b>공공편익시설 거리:</b> <span id="p_CVdist_display"></span></li>
+      <li ><b>지가 비율:</b><span id="p_price_display"></span></li>
+      <li ><b>도로와의 거리:</b> <span id="p_Rdist_display"></span></li>
+      <li ><b>경지정리 면적비율:</b> <span id="p_Arate_display"></span></li>
+      <li ><b>상위등급 비율:</b> <span id="p_Erate_display"></span></li>
+      <li ><b>공적규제 면적비율:  </b><span id="p_RGArate_display"></span></li>
+      <li ><b>공적규제 면적비율:</b> <span id="p_RGdist_display"></span></li>
+      <li ><b>경지정리지역과의 거리:</b><span id="p_FMdist_display"></span></li>
+      <li ><b>바다와의 거리: </b> <span id="p_Seadist_display"></span></li>
+      <li ><b>개발적성값 : </b> <span id="p_dv_sumsocre_display"></span></li>
+      <li ><b>보전적성값 : </b> <span id="p_cs_sumsocre_display"></span></li>
+      <li ><b>종합적성값(score) : </b> <span id="p_t_socre_display"></span></li>
+      <li ><b>종합적성값(가 - 마) : </b> <span id="p_grade_display"></span></li>
+    </ul>
+  </div>
+
+
+
+
+
+
+
+
+  <!-- 사이드 바 기능 구현 -->
+
+
+  <script type="module" src="./main.js" charset="UTF-8"></script>
+</body>
+
+</html>
+
+<!-- 임시로 남겨놓을것 -->
+<!-- <div class="contents2">
+            <h3> 선택한 토지 정보</h3>
+            <ul class="statues_window">
+              <li>PNU 번호 : <span id="pnu_window"></span></li>
+              <li>주소 :<span id="address_window"></span></li>
+              <li>지번 :<span id="jibun_window"></span></li>
+              <li>면적 :<span id="area_window"></span></li>
+              <li>용도지역 :<span id="youngdo_window"></span></li>
+              <li>공시지가 :<span id="price_window"></span></li>
+              <li>지표별 평가점수 :<span id="land_score"></span></li>
+              <li>특성별 적성값 :<span id="char_score"></span></li>
+              <li>종합 적성값 :<span id="total_score"></span></li>
+            </ul>
+          </div> -->
+<!-- <div class="contents3">
+            <tr>
+              <th> 점수 입력창 </th>
+              <td>
+                <br>
+              <form action="./insert.jsp">
+                지표별 평가점수 입력<input type="text" id="land_score_submit"><br>
+                특성별 적성값 입력<input type="text" id="char_score_submit"><br>
+                종합적성값 입력<input type="text" id="total_score_submit"><br>
+                <input type="submit" id="score_submit" value="저장"><br>
+                <button id ='score_submit' type='button'>입력</button>
+                <button id ='score_delete' type='button'>삭제</button>
+              </form>
+              </td>
+            </tr>
+          </div> -->
+<!-- 임시로 남겨놓을것 -->

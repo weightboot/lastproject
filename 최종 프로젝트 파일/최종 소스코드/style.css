@@ -1,0 +1,470 @@
+@import "node_modules/ol/ol.css";
+/* 폰트 적용 시작 */
+@font-face {
+  font-family: 'TmonMonsori';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/TmonMonsori.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+/* 폰트적용 끝 */
+
+/* 노멀라이즈 시작 */
+body,
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+body {
+  height: 1000px;
+  background-color: white
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+/* 노멀라이즈 끝 */
+
+/* css 문단 잡기 시작 */
+#header {
+  height: 12.8%;
+  border-bottom: 5px solid #000000; /* 검정색 */
+  padding: 0px;
+  
+  background-color: white
+
+}
+#map_container{
+  height: 100%;
+  width: 81.8%;
+  float: left;
+  box-sizing: border-box;
+  background-color: white
+}
+
+.side-bar-right{
+  border-left: #000000 2px;
+  border-left-style: solid;
+  height: 100%;
+  width: 18.2%;
+  float: right;
+  box-sizing: border-box;
+  background-color: white;
+  padding: 20px;
+}
+
+
+#map {
+  position: absolute;
+  left: 0;
+  top: 153px;
+  height: 98.7%;
+  width: 81.8%;
+}
+/* css 문단 잡기 시작 */
+
+/* 헤더 스타일 잡기 */
+.logo-bar {
+  display: flex;
+  justify-content: space-between; /* 요소들을 공간의 양 끝에 배치 */
+  align-items: center; /* 수직 가운데 정렬 */
+  position: relative;
+}
+
+.header-image {
+  position: absolute;
+  left: 150px; /* 오른쪽 끝에서 20px 띄움 */
+  
+}
+
+.header-image{
+  padding-top: 30px; 
+}
+
+/*사이트의 중앙에 위치하도록 결정 */
+.con {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 헤더 스타일 끝*/
+
+/* 우측 사이드바 스타일 시작 */
+.input-form {
+  display: flex;
+  flex-direction: column;
+  
+}
+
+.form-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.form-group label {
+  flex: 1;
+  margin-right: 0px;
+  text-align: center;
+}
+
+.form-group input {
+  width: 120px; /* 원하는 너비 */
+  height: 10px; /* 원하는 높이 */
+  padding: 5px; /* 입력창 안의 여백 조정 */
+  font-size: 15px; /* 글자 크기 조정 */
+}
+#form-buttons_first{
+  padding-top: 30px; 
+  padding-bottom: 5px;
+}
+
+.form-buttons{
+  padding-left: 110px;
+}
+
+.form-buttons input {
+  width: 100px; /* 원하는 너비 */
+  height: 70px; /* 원하는 높이 */
+
+}
+
+
+.button_group{
+  display: flex;
+  justify-content: center;
+}
+/* 우측 사이드바 스타일 끝 */
+
+
+/* 라이브러리 시작 */
+/* inline-grid */
+.text-align-center {
+  text-align: center;
+}
+
+.inline-grid {
+  font-size: 0;
+}
+
+.inline-grid>* {
+  font-size: 1rem;
+  display: inline-block;
+  vertical-align: top;
+  box-sizing: border-box;
+  
+}
+
+/* inline-grid 끝*/
+
+/* 사이트의 최소 너비 결정 */
+.con-min-width {
+  min-width: 1200px;
+  padding: 0 10px;
+}
+
+/* 라이브러리 끝 */
+
+/* 커스텀 시작 */
+/* 메뉴바 시작 */
+.menu-bar__menu-box-1 ul.inline-grid li{
+  border: 1px solid #ccc;
+  margin-left: auto;
+  border-radius: 5px; /* 모서리 둥글게 */
+}
+
+/* .aligned-right 스타일 추가 */
+.aligned-right {
+  margin-left: auto; /* 오른쪽 정렬 */
+}
+
+/* 메뉴바 시작 */
+
+.logo-bar>div {
+  text-align: center;
+  
+}
+
+.logo-bar>div>.logo-bar__logo {
+  font-size: 5rem;
+  color: #000000; /* 검정색 */
+  cursor: default;
+  
+}
+
+.menu-bar__menu-box-1>ul>li>a {
+  display: block;
+  font-size: 2rem;
+  padding: 10px 30px;
+  
+}
+
+.logo-bar>div>.logo-bar__logo>span>span:nth-of-type(1) {
+  color: #000000; /* 검정색 */
+}
+
+.logo-bar>div>.logo-bar__logo>span>span:nth-of-type(2) {
+  color: #000000; /* 검정색 */
+}
+
+.logo-bar>div>.logo-bar__logo>span>span:nth-of-type(3) {
+  color: #000000; /* 검정색 */
+}
+/* 메뉴바 끝 */
+
+
+.top_box {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+  padding-top: 20px;
+  padding-right: 100px;
+  gap: 40px; /* 요소 사이의 간격 조정 */
+
+  font-size: 20px; /* 원하는 글자 크기 설정 */
+
+}
+
+/* .row 요소의 글자 크기 설정 */
+
+.row_box {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+  align-items: center; /* 수직 가운데 정렬 */
+  padding: 0px;
+  gap: 40px; /* 요소 사이의 간격 조정 */
+  padding: 5px;
+  padding-right: 300px; /* 오른쪽에서 100px 띄우기 */
+}
+input[type="submit"], input[type="button"], button{
+  font-size: 15px; /* 버튼 및 셀렉트 박스의 글자 크기 설정 */
+  padding: 5px; /* 버튼 및 셀렉트 박스의 패딩 설정 */
+  border-radius: 5px; /* 모서리를 둥글게 설정 */
+  color: #FFF5E1;
+  background-color: #0C1844;
+
+}
+.form-select{
+  font-size: 15px; /* 버튼 및 셀렉트 박스의 글자 크기 설정 */
+  padding: 5px; /* 버튼 및 셀렉트 박스의 패딩 설정 */
+}
+input[type="submit"]:hover, input[type="button"]:hover, button:hover {
+  background-color: #FFF5E1;
+  color:#000000;
+}
+
+
+/* 커스텀 끝 */
+
+/* 기본 체크박스 설정 */
+input[type="checkbox"] {
+  position: absolute;
+  cursor: pointer;
+  left: 0px;
+  height: 25px;
+  width: 25px;
+}
+
+/* 커스텀 시작 */
+/* 2차 이상의 메뉴를 숨기기 */
+.side-bar>ul ul {
+  display: none;
+}
+
+/* 사이드바 시작 */
+
+/* 사이드바의 너비와 높이를 변수를 통해 통제 */
+/* menu_bar 위치 설정 */
+#menu_bar_position {
+  position: absolute;
+  width: 10%;
+  height: 100%;
+  float: left;
+  padding: 1px;
+  bottom: 400px;
+}
+/* 사이드바 크기 지정 */
+:root {
+  --side-bar-width: 270px;
+  --side-bar-height: 20vh;
+}
+
+.side-bar {
+  /* 스크롤을 따라오도록 지정 */
+  position: fixed;
+  background-color: #0C1844;
+  /* 사이드바의 높이를 전체 화면 높이 지정 */
+  width: var(--side-bar-width);
+  min-height: var(--side-bar-height);
+  /* 사이드바 위와 아래의 마진을 동일하게 지정 */
+  margin-top: calc((100vh - var(--side-bar-height)) / 2);
+}
+
+/* 아이콘 시작 */
+.side-bar__icon-box {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.side-bar__icon-1 {
+  position: relative;
+  width: 23px;
+  height: 17px;
+  margin: 15px;
+  margin-top: 20px;
+  transition: .5s;
+}
+
+:root {
+  --side-bar__icon: .5s;
+}
+
+.side-bar__icon-1>div {
+  position: absolute;
+  width: 100%;
+  height: 20%;
+  background-color: #FFFFFF;
+  transition: all var(--side-bar__icon);
+}
+
+.side-bar__icon-1>div:nth-of-type(1) {
+  top: 0;
+  width: auto;
+  left: 0;
+  right: 0;
+  transition: all var(--side-bar__icon), left calc(var(--side-bar__icon) / 2) calc(var(--side-bar__icon) / 2), right calc(var(--side-bar__icon) / 2) calc(var(--side-bar__icon) / 2), height calc(var(--side-bar__icon) / 2) 0s;
+}
+
+.side-bar__icon-1>div:nth-of-type(2) {
+  top: 40%;
+  transform-origin: bottom left;
+}
+
+.side-bar__icon-1>div:nth-of-type(3) {
+  top: 80%;
+  left: auto;
+  right: 0;
+  transform-origin: bottom right;
+}
+
+.side-bar:hover .side-bar__icon-1 {
+  transform: translate(-198px, 0);
+}
+
+.side-bar:hover .side-bar__icon-1>div:nth-of-type(2) {
+  transform: rotate(45deg);
+  width: 70.5%;
+  height: 25%;
+}
+
+.side-bar:hover .side-bar__icon-1>div:nth-of-type(3) {
+  top: 40%;
+  transform: rotate(-45deg);
+  width: 70.5%;
+  height: 25%;
+}
+
+.side-bar:hover .side-bar__icon-1>div:nth-of-type(1) {
+  left: 41%;
+  right: 41%;
+  height: 100%;
+  transition: all var(--side-bar__icon), left calc(var(--side-bar__icon) / 2) 0s, right calc(var(--side-bar__icon) / 2) 0s, height calc(var(--side-bar__icon) / 2) calc(var(--side-bar__icon) / 2);
+}
+
+/* 아이콘 끝 */
+
+/* 모든 메뉴의 a에 속성값 부여 */
+.side-bar ul>li>a {
+  display: block;
+  color: #FFFFFF; /* 흰색 */
+  font-size: 1.4rem;
+  font-weight: bold;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 50px;
+  transition: .5s;
+}
+
+/* 자식의 position이 absolute일 때 자식을 영역 안에 가두어 준다 */
+.side-bar>ul>li {
+  position: relative;
+}
+
+/* 모든 메뉴가 마우스 인식 시 반응 */
+.side-bar ul>li:hover>a { 
+  background-color: #FFF5E1; /* 중간 회색 */
+  border-bottom: 1px solid #000000;
+  color:#000000;
+}
+
+/* 1차 메뉴의 항목이 마우스 인식 시에 2차 메뉴 등장 */
+.side-bar>ul>li:hover>ul {
+  display: block;
+  position: absolute;
+  background-color: #0C1844; /* 어두운 회색 */
+  top: 0;
+  /* 2차 메뉴의 상단을 1차 메뉴의 상단에 고정 */
+  left: 100%;
+  /* 2차 메뉴를 1차 메뉴의 너비만큼 이동 */
+  width: 100%;
+  /* 1차 메뉴의 너비를 상속 */
+}
+
+/* 사이드바 너비의 80%만큼 왼쪽으로 이동 */
+.side-bar {
+  border-radius: 20px;
+  transform: translate(calc(var(--side-bar-width) * -0.8), 0);
+  transition: .5s;
+}
+
+/* 마우스 인식 시 원래의 위치로 이동 */
+.side-bar:hover {
+  transform: translate(-20px, 0);
+  /* 둥근 모서리의 너비만큼 숨겨주기 */
+}
+
+/* 사이드바 끝 */
+
+/* 커스텀 끝 */
+
+
+
+
+/* .landyview_container {
+  top:152px;
+  left: 1750px;
+  position: absolute;
+  float: left;
+  width: 352px;
+  height: 99%;
+  padding: 5px;
+  border: 2px solid #000000; 
+  background-color: #F1f3f5; 
+} */
+
+
+.logo-image {
+  padding-top: 20px; 
+  padding-bottom: 20px;
+}
+
+.landyview
+{
+  position: absolute;
+  top: 54.4vh;
+  left : 0vh;
+  border-radius: 10px; 
+  width: 400px;
+  height: 565px;
+  padding: 5px;
+  border: 1px solid rgba(128, 128, 128, 0);
+  background-color: #ece6cc
+}
+
+.landyview li{
+  display: flex;
+  padding: 2px;
+}
+
